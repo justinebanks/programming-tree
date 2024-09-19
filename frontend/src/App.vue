@@ -1,18 +1,18 @@
 <script setup>
 	import { ref } from "vue";
+	import NavBar from "./components/NavBar.vue";
+	import HeroPage from "./components/HeroPage.vue";
 
-	const message = ref("Hello World");
-
-	const changeMsg = () => {
-		message.value = "New Message";
-	}
 </script>
 
 <template>
-	<div>
-		<p>{{ message }}</p>
-		<button @click="changeMsg()">Change Message</button>
-	</div>
+	<NavBar />
+	<HeroPage
+		title="Programming Tree"
+		text="A Roadmap to Guide Your Journey Through the Vast World of Computer Science"
+	/>
 </template>
 
-<style scope></style>
+<style scope>
+
+</style>
