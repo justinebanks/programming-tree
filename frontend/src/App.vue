@@ -1,18 +1,9 @@
 <script setup>
-	import { ref } from "vue";
 	import NavBar from "./components/NavBar.vue";
-	import HeroPage from "./components/HeroPage.vue";
-
+    import { RouterView } from "vue-router";
 </script>
 
 <template>
 	<NavBar />
-	<HeroPage
-		title="Programming Tree"
-		text="A Roadmap to Guide Your Journey Through the Vast World of Computer Science"
-	/>
+    <RouterView />
 </template>
-
-<style scope>
-
-</style>
