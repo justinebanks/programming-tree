@@ -1,5 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
+import Axios from "axios";
+
 
 let ctx = null;
 let canvas = null;
@@ -14,20 +16,14 @@ let root = null;
 function updateTreeNodes() {
     const params = getQueryParams();
 
-    // if (params.id != undefined) {
-    //     const basePoint = points.filter((p) => p.id == parseInt(params.id))[0];
-    //     console.log("Base Point: ", basePoint);
-
-    //     const allChildren = basePoint.getAllChildren();
-
-    //     console.log("All Children: ", allChildren);
-    //     points = [basePoint, ...allChildren];
-    // }
-
     if (params.id != undefined) {
         const newRoot = points.filter(point => point.id == params.id)[0];
         root = newRoot;
     }
+}
+
+function randRange(min, max) {
+    return Math.floor(Math.random() * (max - min) + min);
 }
 
 
@@ -45,7 +41,6 @@ function getQueryParams() {
     catch (TypeError) {
         return [];
     }
-
 }
 
 
@@ -118,7 +113,7 @@ class TreeNode {
                 window.location.pathname = `/node/${this.id}`;
             }
 
-
+            // Follow Mouse (Drag)
             // this.x = mouse.x;
             // this.y = mouse.y;
             // console.log("CLICKED ", this.color);
@@ -227,11 +222,29 @@ function updateChildren(root) {
     }
 }
 
+function dataToTreeNodes(data) {
+    let nodes = [];
+
+    for (let node of data) {
+        const newNode = new TreeNode(
+            node.id, 
+            nodes.filter((n => n.id == node.parentid))[0], 
+            randRange(0, canvas.width), 
+            randRange(0, canvas.height), 
+            node.color);
+        
+        if (node.wrapper == true) newNode.isWrapper = true;
+
+        nodes.push(newNode);
+    }
+
+    return nodes;
+}
+
 
 const animate = () => {
     requestAnimationFrame(animate);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
 
     ctx.fillStyle = "purple";
     ctx.fillRect(0, 0, 100, 100);
@@ -240,14 +253,11 @@ const animate = () => {
 
     root.update();
     updateChildren(root);
-
-    // for (let i = 0; i < points.length; i++) {
-    //     points[i].update();
-    // }
 }
 
 
-onMounted(() => {
+
+onMounted(async () => {
     canvas = document.getElementById("canv");
     console.log("Canvas: ", canvas);
     ctx = canvas.getContext('2d');
@@ -277,40 +287,36 @@ onMounted(() => {
     })
 
 
+    const nodeData = await Axios.get("http://localhost:8080/nodes");
+    console.log("Data: ", nodeData.data);
 
-    const p1 = new TreeNode(1, null, 200, 200, "orange");
-    const p2 = new TreeNode(2, p1, 350, 400,"blue");
-    const p3 = new TreeNode(3, p1, 50, 400, "blue");
+    points = dataToTreeNodes(nodeData.data);
+    root = points.filter(point => point.parentid == null)[0];
 
-    const p4 = new TreeNode(4, p2, 200, 600, "green");
-    const p5 = new TreeNode(5, p2, 500, 600, "green");
 
-    p2.isWrapper = true;
+    // const p1 = new TreeNode(1, null, 200, 200, "orange");
+    // const p2 = new TreeNode(2, p1, 350, 400,"blue");
+    // const p3 = new TreeNode(3, p1, 50, 400, "blue");
 
-    //p4.changeParent(p3);
+    // const p4 = new TreeNode(4, p2, 200, 600, "green");
+    // const p5 = new TreeNode(5, p2, 500, 600, "green");
 
-    points = [p1, p2, p3, p4, p5];
-    root = p1;
+    // p2.isWrapper = true;
+    // p1.isWrapper = true;
+
+
+    // points = [p1, p2, p3, p4, p5];
+    // root = p1;
 
     animate();
 });
-
-const fillRed = () => {
-    ctx.fillStyle = "red";
-    ctx.fillRect(0, 0, 100, 100);
-}
-
 
 </script>
 
 <template>
     <div class="container">
-        <div>The Actual Programming Tree</div>
         <canvas width="800px" height="800px" id="canv"></canvas>
-        <br>
-        <button @click="fillRed()">Fill Red</button>
     </div>
-
 </template>
 
 <style scope>
