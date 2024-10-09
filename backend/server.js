@@ -1,26 +1,51 @@
 const express = require('express');
 const path = require('path');
+const fs = require("node:fs");
 const cors = require("cors");
 const { Sequelize } = require('sequelize');
 
+
+
+
+let sequelize = null; // Null Sequelize Object
+let configData = {};
+
+// Retrieves data from config.ini
+fs.readFile(path.join(__dirname, '/config.ini'), 'utf-8', (err, data) => {
+    if (err) {
+        console.error(err);
+    }
+
+    console.log(data);
+    stringData = data.split("\r\n");
+
+    // Formats config data
+    for (let dataPoint of stringData) {
+        if (dataPoint != '') {
+            const [key, value] = dataPoint.split("=");
+            configData[key] = value;
+        }
+    }
+
+    console.log("CONFIG", configData);
+
+    // Initializes database connection using config data
+    sequelize = new Sequelize(`postgres://${configData.db_user}:${configData.db_pwd}@localhost:5432/${configData.db_name}`);
+
+    try {
+        sequelize.authenticate().then(() => 
+            console.log('Connection has been established successfully.')); 
+    }
+    catch (error) {
+        console.error('Unable to connect to the database:', error);
+    }
+
+
+})
+
+
+
 const app = express();
-const sequelize = new Sequelize('postgres://postgres:LaVaLoRd4953@localhost:5432/postgres');
-
-
-try {
-    sequelize.authenticate().then(() => 
-        console.log('Connection has been established successfully.')); 
-}
-catch (error) {
-    console.error('Unable to connect to the database:', error);
-}
-
-// sequelize.query('SELECT * FROM nodes;')
-//     .then(([results, metadata]) => {
-//         console.log("Results: ", results);
-//         console.log("Metadata: ", metadata);
-//     });
-
 
 
 const PORT = process.env.PORT || 8080;
