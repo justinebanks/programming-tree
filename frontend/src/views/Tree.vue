@@ -19,7 +19,9 @@ function updateTreeNodes() {
     if (params.id != undefined) {
         const newRoot = points.filter(point => point.id == params.id)[0];
         root = newRoot;
+        positionNodes(root);
     }
+
 }
 
 function randRange(min, max) {
@@ -45,10 +47,10 @@ function getQueryParams() {
 
 
 class TreeNode {
-    constructor(id, parent, x, y, color="white") {
+    constructor(id, parentid, x, y, color="white") {
         this.x = x;
         this.y = y;
-        this.width = 100;
+        this.width = 150;
         this.height = 100;
 
         this.isWrapper = false;
@@ -60,10 +62,23 @@ class TreeNode {
         this.color = color;
         
         this.children = [];
-        this.parent = parent;
 
-        console.log("Parent: ", this.parent);
-        if (this.parent != null) this.parent.addChild(this);
+        this.parentid = parentid;
+        this.parent = null;
+
+    }
+
+    getParent() {
+        const parents = points.filter(node => node.id == this.parentid);
+
+        if (parents.length == 1) {
+            this.parent = parents[0];
+            this.parent.addChild(this);
+            return parents[0];
+        }
+        else {
+            console.log("PARENT RETRIEVAL ERROR");
+        }
     }
 
     draw() {
@@ -80,12 +95,15 @@ class TreeNode {
         }
 
         // Actual Node
+        ctx.fillStyle = "black";
+        const borderWidth = 5
+        ctx.fillRect(this.x-((this.width+borderWidth)/2), this.y-((this.height+borderWidth)/2), this.width+borderWidth, this.height+borderWidth);
         ctx.fillStyle = this.color;
-        //ctx.fillRect(this.x, this.y, this.width, this.height);
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.width/2, 0, Math.PI*2);
-        ctx.closePath();
-        ctx.fill();
+        ctx.fillRect(this.x-(this.width/2), this.y-(this.height/2), this.width, this.height);
+        // ctx.beginPath();
+        // ctx.arc(this.x, this.y, this.width/2, 0, Math.PI*2);
+        // ctx.closePath();
+        // ctx.fill();
 
         // Node Text
         if (this.showText) {
@@ -93,23 +111,20 @@ class TreeNode {
             //ctx.font = "30px Inter";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
-            ctx.fillText(this.text, this.x, this.y, this.width);
+            ctx.fillText(this.text, this.x, this.y, this.width-5);
         }
     }
 
     update() {
+        if (this.parent == null && this.id != root.id) this.getParent();
         this.draw();
 
         if (this.isPressed()) {
-            //this.x = mouse.x - this.width/2;
-            //this.y = mouse.y - this.height/2;
-
             if (this.isWrapper) {
                 window.history.pushState({}, "", `/tree?id=${this.id}`);
                 updateTreeNodes();
             }
             else {
-                console.log(window.location.pathname);
                 window.location.pathname = `/node/${this.id}`;
             }
 
@@ -120,11 +135,11 @@ class TreeNode {
         }
 
         if (this.isHovered()) {
-            this.width = 150;
+            //this.width = 150;
             this.showText = true;
         }
         else {
-            this.width = 100;
+            //this.width = 100;
             this.showText = false;
         }
     }
@@ -164,7 +179,6 @@ class TreeNode {
             children.push(...child.getAllChildren());
         }
 
-        //console.log(children);
         return children;
     }
 
@@ -174,30 +188,6 @@ class TreeNode {
 
         if (nodeObj.parent != this) {
             nodeObj.parent = this;
-        }
-    }
-
-
-    changeParent(newParent) {
-        let removalId = -1;
-
-        for (let i = 0; i < this.parent.children.length; i++) {
-            if (this.parent.children[i].id == this.id) {
-                removalId = i;
-            }
-        }
-
-        if (removalId != -1) {
-            this.parent.children.splice(removalId, 1);
-        }
-
-
-        this.parent = newParent;
-
-        const matches = newParent.children.filter((child) => child.id == this.id);
-
-        if (matches.length == 0) {
-            newParent.addChild(this);
         }
     }
 
@@ -222,18 +212,39 @@ function updateChildren(root) {
     }
 }
 
+// Positions Node Within the Node Tree According to the Root Node
+function positionNodes(node) {
+    setTimeout(() => {
+        if (node.id == root.id) {
+            root.x = canvas.width/2
+            root.y = 100;
+        }
+
+        node.children.forEach((child, index) => {
+            const relX = canvas.width/(node.children.length+1)
+
+            child.x = relX * (index+1) + (node.x - canvas.width/2);
+            child.y = node.y + 150;
+
+            positionNodes(child);
+            
+        })
+    }, 250);
+}
+
 function dataToTreeNodes(data) {
     let nodes = [];
 
     for (let node of data) {
         const newNode = new TreeNode(
             node.id, 
-            nodes.filter((n => n.id == node.parentid))[0], 
+            node.parentid,
             randRange(0, canvas.width), 
             randRange(0, canvas.height), 
             node.color);
         
         if (node.wrapper == true) newNode.isWrapper = true;
+        newNode.text = node.name;
 
         nodes.push(newNode);
     }
@@ -259,7 +270,6 @@ const animate = () => {
 
 onMounted(async () => {
     canvas = document.getElementById("canv");
-    console.log("Canvas: ", canvas);
     ctx = canvas.getContext('2d');
 
     //canvas.width = window.innerWidth;
@@ -288,26 +298,17 @@ onMounted(async () => {
 
 
     const nodeData = await Axios.get("http://localhost:8080/nodes");
-    console.log("Data: ", nodeData.data);
+    console.log("Node Data: ", nodeData.data);
 
     points = dataToTreeNodes(nodeData.data);
     root = points.filter(point => point.parentid == null)[0];
 
+    // Initialize Parents of All Nodes
+    for (let point of points) {
+        point.update();
+    }
 
-    // const p1 = new TreeNode(1, null, 200, 200, "orange");
-    // const p2 = new TreeNode(2, p1, 350, 400,"blue");
-    // const p3 = new TreeNode(3, p1, 50, 400, "blue");
-
-    // const p4 = new TreeNode(4, p2, 200, 600, "green");
-    // const p5 = new TreeNode(5, p2, 500, 600, "green");
-
-    // p2.isWrapper = true;
-    // p1.isWrapper = true;
-
-
-    // points = [p1, p2, p3, p4, p5];
-    // root = p1;
-
+    positionNodes(root);
     animate();
 });
 
