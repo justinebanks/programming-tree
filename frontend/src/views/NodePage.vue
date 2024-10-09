@@ -78,7 +78,7 @@ onMounted(async () => {
     <div class="container">
         <h1 v-if="!isLoading && !error" :style="{ backgroundColor: color }">{{ name }}</h1>
         <h2 v-if="parents.length">Root > {{ parents.join(' > ') }} > {{ name }}</h2>
-        <h2 v-else>{{ name }}</h2>
+        <h2 v-else>Root > {{ name }}</h2>
 
 
 
