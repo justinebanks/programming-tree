@@ -59,6 +59,7 @@ class TreeNode {
         this.text = "Test Text";
         this.showText = true;
 
+        this.baseColor = color;
         this.color = color;
         
         this.children = [];
@@ -132,6 +133,13 @@ class TreeNode {
             // this.x = mouse.x;
             // this.y = mouse.y;
             // console.log("CLICKED ", this.color);
+        }
+
+        if (this.isHovered()) {
+            this.color = "black";
+        }
+        else {
+            this.color = this.baseColor;
         }
     }
 

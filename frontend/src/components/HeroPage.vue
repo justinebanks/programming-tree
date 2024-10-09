@@ -11,6 +11,10 @@ defineProps({
     }
 });
 
+const redirectToLogin = () => {
+    window.location.pathname = '/login';
+}
+
 </script>
 
 <template>
@@ -18,6 +22,7 @@ defineProps({
         <div class="text">
             <h1>{{ title }}</h1>
             <p>{{ text }}</p>
+            <button @click="redirectToLogin()">Sign Up / Login</button>
         </div>
         <img src="https://i.giphy.com/media/dxCT5ok6OM7MS5zAqA/giphy.gif" alt="Image">
     </div>
@@ -51,5 +56,19 @@ defineProps({
     p {
         color: white;
         font-size: 20px;
+    }
+
+    button {
+        width: 300px;
+        height: 40px;
+        font-size: 15px;
+        border-radius: 5px;
+        border: 1px solid black;
+        background-color: rgba(255, 255, 255, 0.5);
+        font-weight: bold;
+    }
+
+    button:hover {
+        background-color: rgba(255, 255, 255, 0.8);
     }
 </style>
