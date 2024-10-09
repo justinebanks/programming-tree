@@ -4,7 +4,7 @@ const cors = require("cors");
 const { Sequelize } = require('sequelize');
 
 const app = express();
-const sequelize = new Sequelize('postgres://postgres:LaVaLoRd4953@localhost:5432/postgres');
+const sequelize = new Sequelize('postgres://postgres:!231njsfN@localhost:5432/postgres');
 
 
 try {
