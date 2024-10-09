@@ -57,7 +57,7 @@ class TreeNode {
         this.id = id
 
         this.text = "Test Text";
-        this.showText = false;
+        this.showText = true;
 
         this.color = color;
         
@@ -96,7 +96,7 @@ class TreeNode {
 
         // Actual Node
         ctx.fillStyle = "black";
-        const borderWidth = 5
+        const borderWidth = 4;
         ctx.fillRect(this.x-((this.width+borderWidth)/2), this.y-((this.height+borderWidth)/2), this.width+borderWidth, this.height+borderWidth);
         ctx.fillStyle = this.color;
         ctx.fillRect(this.x-(this.width/2), this.y-(this.height/2), this.width, this.height);
@@ -108,10 +108,10 @@ class TreeNode {
         // Node Text
         if (this.showText) {
             ctx.fillStyle = "white";
-            //ctx.font = "30px Inter";
+            ctx.font = "25px Arial";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
-            ctx.fillText(this.text, this.x, this.y, this.width-5);
+            ctx.fillText(this.text, this.x, this.y, this.width-10);
         }
     }
 
@@ -132,15 +132,6 @@ class TreeNode {
             // this.x = mouse.x;
             // this.y = mouse.y;
             // console.log("CLICKED ", this.color);
-        }
-
-        if (this.isHovered()) {
-            //this.width = 150;
-            this.showText = true;
-        }
-        else {
-            //this.width = 100;
-            this.showText = false;
         }
     }
 
@@ -256,11 +247,6 @@ function dataToTreeNodes(data) {
 const animate = () => {
     requestAnimationFrame(animate);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = "purple";
-    ctx.fillRect(0, 0, 100, 100);
-    ctx.fillStyle = "red";
-    ctx.fillRect(0, 0, 30, 30);
 
     root.update();
     updateChildren(root);

@@ -15,6 +15,6 @@ VALUES
     (NULL, 'Programming Tree', 'orange', 'true'),
     (1, 'Web Development', 'blue', 'false'),
     (1, 'Console Applications', 'blue', 'true'),
-    (1, 'Data Science', 'blue', 'true'),
+    (1, 'Data Science', 'blue', 'false'),
     (3, 'Datatypes', 'green', 'false'),
     (3, 'Variables', 'green', 'false');
