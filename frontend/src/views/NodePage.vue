@@ -5,6 +5,7 @@ import Axios from "axios";
 const name = ref("");
 const color = ref("");
 const parentId = ref("");
+const segments = ref([]);
 const parents = ref([]); // This will store the names of all parent nodes
 const isLoading = ref(true);
 const error = ref(null);
@@ -49,10 +50,18 @@ onMounted(async () => {
             if (response.data) {
                 const nodeData = response.data;
 
+                let segmentData = JSON.parse(decodeURI(nodeData.segments));
+
+                for (let i = 0; i < segmentData.length; i++) {
+                    segmentData[i] = atob(segmentData[i]);
+                }
+
                 // Assign data from the node
                 name.value = nodeData.name;
                 color.value = nodeData.color;
                 parentId.value = nodeData.parentid;
+                segments.value = segmentData;
+
 
 
                 // Fetch parent nodes recursively
@@ -80,15 +89,19 @@ onMounted(async () => {
         <h2 v-if="parents.length">Root > {{ parents.join(' > ') }} > {{ name }}</h2>
         <h2 v-else>Root > {{ name }}</h2>
 
-
-
-        <p>
+        <p class="text">
             "The quick brown fox jumps over the lazy dog" is an English-language pangram – a sentence
             that contains all the letters of the alphabet. The phrase is commonly used for touch-typing
             practice, testing typewriters and computer keyboards, displaying examples of fonts, and
             other applications involving text where the use of all letters in the alphabet is desired.
         </p>
-        <p>Parent ID: {{ parentId }}</p>
+        <p class="text">Parent ID: {{ parentId }}</p>
+
+        <div v-for="segment in segments">
+            <p class="text" v-if="segment.slice(0, 6) == ':text:'">{{ segment.slice(6, -1) }}</p>
+            <p class="code" v-else-if="segment.slice(0, 6) == ':code:'">{{ segment.slice(6, -1) }}</p>
+            <p v-else>INVALID SEGMENT</p>
+        </div>
     </div>
 </template>
 
@@ -139,4 +152,9 @@ p {
     font-size: 15px;
     line-height: 1.6;
 }
+
+p.code {
+    background-color: #242e31;
+}
+
 </style>
