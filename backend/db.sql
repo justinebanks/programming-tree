@@ -23,3 +23,16 @@ VALUES
 -- Default Value for 'segment' Column
 UPDATE nodes
 SET segments = '%5B%22OnRleHQ6VGVzdCBVUkwgRW5jb2RlZCBKU09OIEVsZW1lbnQgTnVtYmVyIE9uZQ==%22,%22OmNvZGU6ZGVmIHRleHRfZnVuYygpOgoJcHJpbnQoNjApCg==%22%5D';
+
+
+
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+	username TEXT NOT NULL,
+	email TEXT NOT NULL,
+	password TEXT NOT NULL
+	
+);
+
