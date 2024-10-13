@@ -22,7 +22,7 @@ const redirectToSignup = () => {
         <div class="text">
             <h1>{{ title }}</h1>
             <p>{{ text }}</p>
-            <button @click="redirectToSignup()">Create Account</button>
+            <button @click="redirectToSignup()">Create Account/Register</button>
         </div>
         <img src="https://i.giphy.com/media/dxCT5ok6OM7MS5zAqA/giphy.gif" alt="Image">
     </div>
