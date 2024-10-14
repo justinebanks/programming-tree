@@ -25,7 +25,7 @@
         this.success = '';
   
         try {
-            const response = await axios.post('http://localhost:8080/signup', {
+            const response = await axios.post('https://localhost:8443/signup', {
                 username: this.username,
                 email: this.email,
                 password: this.password,
