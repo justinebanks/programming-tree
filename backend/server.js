@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require("node:fs");
 const cors = require("cors");
 const { Sequelize } = require('sequelize');
+const { read } = require('fs');
 
 
 
@@ -140,6 +141,8 @@ app.delete("/nodes/:id", async (req, res) => {
 
 app.post("/signup", (req, res) => {
     console.log("request recived")
+    console.log(req.body)
+    res.json({msg: "Success", msg: req.body});
 })
 
 app.listen(PORT, () => {
