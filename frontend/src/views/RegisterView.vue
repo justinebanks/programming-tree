@@ -21,10 +21,12 @@
         success.value = '';
   
         try {
-            const response = await axios.post('http://localhost:8080/signup', {
+
+            const response = await axios.post('http://localhost:8443/signup', {
                 username: username.value,
                 email: email.value,
                 password: password.value,
+
             });
   
             // Handle success - You may want to redirect the user after registration
