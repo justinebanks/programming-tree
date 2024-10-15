@@ -22,7 +22,7 @@
   
         try {
 
-            const response = await axios.post('http://localhost:8443/signup', {
+            const response = await axios.post('https://localhost:8443/signup', {
                 username: username.value,
                 email: email.value,
                 password: password.value,
