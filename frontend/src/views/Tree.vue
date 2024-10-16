@@ -291,7 +291,7 @@ onMounted(async () => {
     })
 
 
-    const nodeData = await Axios.get("https://localhost:8433/nodes");
+    const nodeData = await Axios.get("https://localhost:8443/nodes");
     console.log("Node Data: ", nodeData.data);
 
     points = dataToTreeNodes(nodeData.data);
