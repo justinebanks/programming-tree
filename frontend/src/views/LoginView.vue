@@ -1,9 +1,5 @@
 <script setup>
 
-defineProps({
-    createAccount: Boolean
-})
-
 function submitCredentials() {
     if (createAccount) {
         // Create Account

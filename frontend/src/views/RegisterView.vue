@@ -1,48 +1,43 @@
-<script>
+<script setup>
   import axios from 'axios';
-  
-  export default {
-    data() {
-      return {
-        username: '',
-        email: '',
-        password: '',
-        password2: '',
-        error: '',
-        success: ''
-      };
-    },
-    methods: {
-      async registerUser() {
+  import { ref } from "vue";
+
+  const username = ref("");
+  const email = ref("");
+  const password = ref("");
+  const password2 = ref("");
+  const error = ref("");
+  const success = ref("");
+
+  async function registerUser() {
         // Basic validation for matching passwords
-        if (this.password !== this.password2) {
-          this.error = "Passwords do not match!";
+        if (password.value !== password2.value) {
+          error.value = "Passwords do not match!";
           return;
         }
   
         // Reset error and success messages
-        this.error = '';
-        this.success = '';
+        error.value = '';
+        success.value = '';
   
         try {
+
             const response = await axios.post('https://localhost:8443/signup', {
-                username: this.username,
-                email: this.email,
-                password: this.password,
+                username: username.value,
+                email: email.value,
+                password: password.value,
+
             });
   
             // Handle success - You may want to redirect the user after registration
-            this.success = 'Registration successful!';
+            success.value = 'Registration successful!';
             console.log(response.data);
         } catch (error) {
             // Handle errors (e.g., validation issues or server problems)
-            this.error = error.response ? error.response.data.message : 'An error occurred!';
+            error.value = error.response ? error.response.data.message : 'An error occurred!';
             console.error(error);
         }
       }
-    }
-  };
-
 
 </script>
 

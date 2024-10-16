@@ -121,8 +121,11 @@ app.delete("/nodes/:id", async (req, res) => {
 });
 
 // Test route for signup
-app.post("/signup", (req, res) => {
+app.post("/signup", async (req, res) => {
+    const { username, email, password } = req.body;
+
     res.json({ msg: "Success", body: req.body });
+    await sequelize.query("INSERT INTO users (username, email, password) VALUES (?, ?, ?);", { replacements: [username, email, password] });
     console.log(req.body);
 });
 

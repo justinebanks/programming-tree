@@ -1,7 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Lancelot&display=swap');
 
 :root {
-  --fav-color: hsl(200, 100%, 50%);
+  --light-blue: #699fad;
+  --mid-blue: #3a708e;
+  --dark-blue: #2b454f;
+  --black: #111215;
+  --very-dark-green: #151d1a;
+  --dark-green: #1d3230;
+  --mid-green: #314e3f;
+  --light-green: #4f5d42;
+  --very-light-green: #9a9f87;
+  --white: #ede6cb;
+  --light-yellow: #f5d893;
+  --light-orange: #e8b26f;
+  --mid-orange: #b6834c;
+  --dark-orange: #704d2b;
+  --brown: #40231e;
+  --black2: #151015;
 }
 
 * {
@@ -12,7 +27,6 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-
-  background-image: linear-gradient(45deg, hsl(100, 70%, 30%), var(--fav-color));
+  background-color: var(--mid-blue);
   height: 100vh;
 }
