@@ -67,6 +67,8 @@ class TreeNode {
         this.parentid = parentid;
         this.parent = null;
 
+        //this.level = 0;
+
     }
 
     getParent() {
@@ -95,12 +97,12 @@ class TreeNode {
             ctx.stroke();
         }
 
-        const colors = ["#699fad", "#3a708e", "#2b454f", "#314e3f", "#4f5d42", "#9a9f87", "#e8b26f", "#b6834c", "#704d2b"];
+        const colors = ["#699fad", "#2b454f", "#314e3f", "#4f5d42", "#9a9f87", "#e8b26f", "#b6834c", "#704d2b"];
 
         // Actual Node
         ctx.fillStyle = "black";
         const borderWidth = 4;
-        const level = TreeNode.getLevel(this);
+        let level = TreeNode.getLevel(this);
         ctx.fillRect(this.x-((this.width+borderWidth)/2), this.y-((this.height+borderWidth)/2), this.width+borderWidth, this.height+borderWidth);
 
         console.log(level, this.id);
@@ -196,26 +198,28 @@ class TreeNode {
     }
 
 
-    static getLevel(nodeObject, level=0) {
-        if (this.parent == null) {
+    static getLevel(nodeObject) {
+        if (nodeObject.parent == null) {
             return 0;
         }
 
-        let currentLevels = 1;
-        let current = this.parent;
+        let level = 0;
+
+        let current = nodeObject.parent;
 
         while (true) {
-            
+            level++;
+
             if (current.parent != null) {
                 current = current.parent;
-                currentLevels++;
             }
             else {
                 break;
             }
         }
-        
-        return currentLevels;
+
+        console.log(level);
+        return level;
     }
 
 }
@@ -273,9 +277,9 @@ function dataToTreeNodes(data) {
 
 const animate = () => {
     requestAnimationFrame(animate);
-    //ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "rgb(20, 30, 50)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // ctx.fillStyle = "rgba(0,0,0,0)";
+    // ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     root.update();
     updateChildren(root);
