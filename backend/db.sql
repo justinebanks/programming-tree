@@ -6,20 +6,20 @@ CREATE TABLE nodes (
     parentId INTEGER,
     name TEXT NOT NULL,
     wrapper BOOLEAN NOT NULL,
-    color TEXT NOT NULL,
+	button BOOLEAN NOT NULL,
+	within BOOLEAN NOT NULL,
     segments TEXT DEFAULT ''
 );
 
 -- Dummy Node Data For Testing
-INSERT INTO nodes (parentId, name, color, wrapper)
+INSERT INTO nodes (parentId, name, wrapper, button, within)
 VALUES
-    (NULL, 'Programming Tree', 'orange', 'true'),
-    (1, 'Web Development', 'blue', 'false'),
-    (1, 'Console Applications', 'blue', 'true'),
-    (1, 'Data Science', 'blue', 'false'),
-    (3, 'Datatypes', 'green', 'false'),
-    (3, 'Variables', 'green', 'false');
-
+    (NULL, 'Programming Tree', 'true', 'false', 'false'),
+    (1, 'Console Applications', 'true', 'true', 'false'),
+	(2, 'Web Development', 'false', 'false', 'false'),
+    (2, 'Data Science', 'false', 'false', 'false'),
+    (2, 'Datatypes', 'false', 'true', 'true'),
+    (2, 'Variables', 'false', 'true', 'true');
 -- Default Value for 'segment' Column
 UPDATE nodes
 SET segments = '%5B%22OnRleHQ6VGVzdCBVUkwgRW5jb2RlZCBKU09OIEVsZW1lbnQgTnVtYmVyIE9uZQ==%22,%22OmNvZGU6ZGVmIHRleHRfZnVuYygpOgoJcHJpbnQoNjApCg==%22%5D';

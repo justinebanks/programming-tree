@@ -124,7 +124,6 @@ class TreeNode {
     }
 
     update() {
-        if (this.parent == null && this.id != root.id) this.getParent();
         this.draw();
 
         if (this.isPressed()) {
@@ -225,13 +224,15 @@ class TreeNode {
 }
 
 function updateChildren(root) {
-    for (let child of root.children) {
-        child.update();
 
-        if (child.isWrapper == false) {
-            updateChildren(child);
-        }
+    
+    for (let child of root.children) {
+        child.update()
+         
+        updateChildren(child);
     }
+        
+    
 }
 
 // Positions Node Within the Node Tree According to the Root Node
@@ -324,7 +325,7 @@ onMounted(async () => {
 
     // Initialize Parents of All Nodes
     for (let point of points) {
-        point.update();
+        point.getParent();
     }
 
     positionNodes(root);
