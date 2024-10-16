@@ -129,15 +129,19 @@ app.post("/signup", async (req, res) => {
     console.log(req.body);
 });
 
-// Start HTTPS server
-https.createServer(sslOptions, app).listen(8443, () => {
-    console.log('✅ HTTPS Server running on port 8443');
-});
+//Start HTTPS server
+// https.createServer(sslOptions, app).listen(8443, () => {
+//     console.log('✅ HTTPS Server running on port 8443');
+// });
 
-// Optional: HTTP server to redirect traffic to HTTPS
-http.createServer((req, res) => {
-    res.writeHead(301, { "Location": `https://${req.headers.host}${req.url}` });
-    res.end();
-}).listen(80, () => {
-    console.log('🌐 HTTP Server running on port 80, redirecting to HTTPS');
-});
+// // Optional: HTTP server to redirect traffic to HTTPS
+// http.createServer((req, res) => {
+//     res.writeHead(301, { "Location": `https://${req.headers.host}${req.url}` });
+//     res.end();
+// }).listen(80, () => {
+//     console.log('🌐 HTTP Server running on port 80, redirecting to HTTPS');
+// });
+
+app.listen(80, () => {
+    console.log("Server Started Successfully");
+})

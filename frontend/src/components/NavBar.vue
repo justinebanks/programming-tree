@@ -14,15 +14,15 @@
         justify-content: right;
         list-style-type: none;
         
-        border-bottom: 2px solid var(--fav-color);
+        border-bottom: 2px solid var(--black);
         padding: 20px;
         
     }
 
-    ul:hover {
-        background-color: hsla(200, 100%, 10%, 0.7);
+    /* ul:hover {
+        background-color: var(--black);
         transition: 0.3s;
-    }
+    } */
 
     ul > li:first-child {
         /* justify-self: flex-start; */
@@ -37,14 +37,14 @@
         padding: 15px;
         border: 1px solid black;
         margin-left: 60px;
-        background-color: var(--fav-color);
+        background-color: var(--mid-green);
         width: 100px;
         text-align: center;
         border-radius: 40px;
     }
 
     ul > li:not(:first-child):hover {
-        background-color: hsl(200, 100%, 30%);
+        background-color: var(--light-green);
     }
 
     ul > li > a {

@@ -95,11 +95,16 @@ class TreeNode {
             ctx.stroke();
         }
 
+        const colors = ["#699fad", "#3a708e", "#2b454f", "#314e3f", "#4f5d42", "#9a9f87", "#e8b26f", "#b6834c", "#704d2b"];
+
         // Actual Node
         ctx.fillStyle = "black";
         const borderWidth = 4;
+        const level = TreeNode.getLevel(this);
         ctx.fillRect(this.x-((this.width+borderWidth)/2), this.y-((this.height+borderWidth)/2), this.width+borderWidth, this.height+borderWidth);
-        ctx.fillStyle = this.color;
+
+        console.log(level, this.id);
+        ctx.fillStyle = colors[level % colors.length]; //this.color;
         ctx.fillRect(this.x-(this.width/2), this.y-(this.height/2), this.width, this.height);
         // ctx.beginPath();
         // ctx.arc(this.x, this.y, this.width/2, 0, Math.PI*2);
@@ -193,10 +198,24 @@ class TreeNode {
 
     static getLevel(nodeObject, level=0) {
         if (this.parent == null) {
-            return level
+            return 0;
         }
 
-        this.getLevel(this.parent, level+1);
+        let currentLevels = 1;
+        let current = this.parent;
+
+        while (true) {
+            
+            if (current.parent != null) {
+                current = current.parent;
+                currentLevels++;
+            }
+            else {
+                break;
+            }
+        }
+        
+        return currentLevels;
     }
 
 }
@@ -254,7 +273,9 @@ function dataToTreeNodes(data) {
 
 const animate = () => {
     requestAnimationFrame(animate);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    //ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "rgb(20, 30, 50)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     root.update();
     updateChildren(root);
@@ -291,7 +312,7 @@ onMounted(async () => {
     })
 
 
-    const nodeData = await Axios.get("https://localhost:8433/nodes");
+    const nodeData = await Axios.get("https://localhost:8443/nodes");
     console.log("Node Data: ", nodeData.data);
 
     points = dataToTreeNodes(nodeData.data);
