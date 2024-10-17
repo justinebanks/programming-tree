@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const cors = require('cors');
+const bcrypt = require('bcrypt')
 const { Sequelize } = require('sequelize');
 
 // HTTPS and HTTP modules
@@ -122,11 +123,68 @@ app.delete("/nodes/:id", async (req, res) => {
 
 // Test route for signup
 app.post("/signup", async (req, res) => {
-    const { username, email, password } = req.body;
+    let { name, email, password, password2} = req.body;
 
-    res.json({ msg: "Success", body: req.body });
-    await sequelize.query("INSERT INTO users (username, email, password) VALUES (?, ?, ?);", { replacements: [username, email, password] });
-    console.log(req.body);
+    let errors = [];
+
+    if (!name || !email || !password || !password2){
+        errors.push({message: "Please enter all fields"});
+    }
+
+    if ( password.length < 6){
+        errors.push({message: "Password should be at least 6 charaters"});
+    }
+
+    if (password != password2) {
+        errors.push({message: "Passwords do not match"});
+    }
+
+    if (errors.length > 0){
+        res.render('register', {errors});
+    } else{
+        // Form valid
+
+        let hashedPassword = await bcrypt.hash(password, 10);
+        
+
+        pool.query(
+            `SELECT * FROM users
+            WHERE email = $1;`, [email], (err, results)=>{
+                if (err){
+                    throw err
+                }
+                
+                
+                if (results.rows.length > 0){
+                    errors.push({message: "Email already registered"});
+                    res.render('register', { errors })
+                }else{
+                    pool.query(
+                        `INSERT INTO users (name, email, password)
+                        VALUES ($1, $2, $3)
+                        RETURNING id, password`, [name, email, hashedPassword],
+                        (err, results) => {
+                            if (err){
+                                throw err
+                            }
+
+                            req.flash('success_msg', "You are now registered. Please log in");
+                            res.redirect('/users/login')
+                        }
+                    )
+                }
+            }
+        );
+    }
+    
+});
+
+    // const { username, email, password } = req.body;
+
+    // res.json({ msg: "Success", body: req.body });
+    // await sequelize.query("INSERT INTO users (username, email, password) VALUES (?, ?, ?);", { replacements: [username, email, password] });
+    // console.log(req.body);
+
 });
 
 //Start HTTPS server
