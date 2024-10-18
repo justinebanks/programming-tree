@@ -67,6 +67,8 @@ class TreeNode {
         this.parentid = parentid;
         this.parent = null;
 
+        //this.level = 0;
+
     }
 
     getParent() {
@@ -95,11 +97,16 @@ class TreeNode {
             ctx.stroke();
         }
 
+        const colors = ["#699fad", "#2b454f", "#314e3f", "#4f5d42", "#9a9f87", "#e8b26f", "#b6834c", "#704d2b"];
+
         // Actual Node
         ctx.fillStyle = "black";
         const borderWidth = 4;
+        let level = TreeNode.getLevel(this);
         ctx.fillRect(this.x-((this.width+borderWidth)/2), this.y-((this.height+borderWidth)/2), this.width+borderWidth, this.height+borderWidth);
-        ctx.fillStyle = this.color;
+
+        console.log(level, this.id);
+        ctx.fillStyle = colors[level % colors.length]; //this.color;
         ctx.fillRect(this.x-(this.width/2), this.y-(this.height/2), this.width, this.height);
         // ctx.beginPath();
         // ctx.arc(this.x, this.y, this.width/2, 0, Math.PI*2);
@@ -190,12 +197,28 @@ class TreeNode {
     }
 
 
-    static getLevel(nodeObject, level=0) {
-        if (this.parent == null) {
-            return level
+    static getLevel(nodeObject) {
+        if (nodeObject.parent == null) {
+            return 0;
         }
 
-        this.getLevel(this.parent, level+1);
+        let level = 0;
+
+        let current = nodeObject.parent;
+
+        while (true) {
+            level++;
+
+            if (current.parent != null) {
+                current = current.parent;
+            }
+            else {
+                break;
+            }
+        }
+
+        console.log(level);
+        return level;
     }
 
 }
@@ -256,6 +279,8 @@ function dataToTreeNodes(data) {
 const animate = () => {
     requestAnimationFrame(animate);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // ctx.fillStyle = "rgba(0,0,0,0)";
+    // ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     root.update();
     updateChildren(root);

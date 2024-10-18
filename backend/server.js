@@ -208,7 +208,7 @@ app.post("/logout", (req, res) => {
 
 
 
-// Start HTTPS server
+//Start HTTPS server
 https.createServer(sslOptions, app).listen(8443, () => {
     console.log('✅ HTTPS Server running on port 8443');
 });
@@ -220,3 +220,7 @@ http.createServer((req, res) => {
 }).listen(80, () => {
     console.log('🌐 HTTP Server running on port 80, redirecting to HTTPS');
 });
+
+// app.listen(80, () => {
+//     console.log("Server Started Successfully");
+// })
