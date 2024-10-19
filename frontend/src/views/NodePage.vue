@@ -57,6 +57,7 @@ onMounted(async () => {
                 }
 
                 // Assign data from the node
+                document.title = nodeData.name + " - Programming Tree";
                 name.value = nodeData.name;
                 color.value = nodeData.color;
                 parentId.value = nodeData.parentid;

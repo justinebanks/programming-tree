@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { onMounted } from "vue";
 import Axios from "axios";
 
 
@@ -19,6 +19,7 @@ function updateTreeNodes() {
     if (params.id != undefined) {
         const newRoot = points.filter(point => point.id == params.id)[0];
         root = newRoot;
+        document.title = root.text + " - Programming Tree";
         positionNodes(root);
     }
 
@@ -47,11 +48,11 @@ function getQueryParams() {
 
 
 class TreeNode {
-    constructor(id, parentid, x, y, color="white") {
+    constructor(id, parentid, x, y) {
         this.x = x;
         this.y = y;
-        this.width = 150;
-        this.height = 100;
+        this.height = 75;
+        this.width = this.height*1.5;
 
         this.isWrapper = false;
         this.within = false;
@@ -59,9 +60,6 @@ class TreeNode {
 
         this.text = "Test Text";
         this.showText = true;
-
-        this.baseColor = color;
-        this.color = color;
         
         this.children = [];
 
@@ -96,8 +94,8 @@ class TreeNode {
             ctx.strokeStyle = "white";
             //ctx.moveTo(this.x + this.width/2, this.y + this.height/2);
             //ctx.lineTo(currentNode.x + currentNode.width/2, currentNode.y + currentNode.height/2);
-            ctx.moveTo(this.x, this.y-50);
-            ctx.lineTo(this.parent.x, this.parent.y+50);
+            ctx.moveTo(this.x, this.y-(this.height/2));
+            ctx.lineTo(this.parent.x, this.parent.y+(this.height/2));
             ctx.closePath();
             ctx.stroke();
         }
@@ -106,21 +104,17 @@ class TreeNode {
 
         // Actual Node
         ctx.fillStyle = "black";
-        const borderWidth = 4;
+        const borderWidth = 3;
         let level = TreeNode.getLevel(this);
         ctx.fillRect(this.x-((this.width+borderWidth)/2), this.y-((this.height+borderWidth)/2), this.width+borderWidth, this.height+borderWidth);
 
-        ctx.fillStyle = colors[level % colors.length]; //this.color;
+        if (!this.isHovered()) ctx.fillStyle = colors[level % colors.length];
         ctx.fillRect(this.x-(this.width/2), this.y-(this.height/2), this.width, this.height);
-        // ctx.beginPath();
-        // ctx.arc(this.x, this.y, this.width/2, 0, Math.PI*2);
-        // ctx.closePath();
-        // ctx.fill();
 
         // Node Text
         if (this.showText) {
             ctx.fillStyle = "white";
-            ctx.font = "25px Arial";
+            ctx.font = "16px Arial";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
             ctx.fillText(this.text, this.x, this.y, this.width-10);
@@ -132,7 +126,8 @@ class TreeNode {
 
         if (this.isPressed()) {
             if (this.isWrapper) {
-                window.history.pushState({}, "", `/tree?id=${this.id}`);
+                //window.history.pushState({}, "", `/tree?id=${this.id}`);
+                window.location.href = `/tree?id=${this.id}`;
                 updateTreeNodes();
             }
             else {
@@ -143,13 +138,6 @@ class TreeNode {
             // this.x = mouse.x;
             // this.y = mouse.y;
             // console.log("CLICKED ", this.color);
-        }
-
-        if (this.isHovered()) {
-            this.color = "black";
-        }
-        else {
-            this.color = this.baseColor;
         }
     }
 
@@ -240,7 +228,7 @@ function updateChildren(top) {
 function positionNodes(node) {
     setTimeout(() => {
         if (node.id == root.id) {
-            root.x = canvas.width/2
+            root.x = canvas.width / 2 / window.devicePixelRatio;
             root.y = 100;
         }
 
@@ -248,15 +236,15 @@ function positionNodes(node) {
         console.log(visibleChildren);
 
         visibleChildren.forEach((child, index) => {
-            const relX = canvas.width/(visibleChildren.length+1)
+            const relX = canvas.width/(visibleChildren.length+1);
 
             child.x = relX * (index+1) + (node.x - canvas.width/2);
-            child.y = node.y + 150;
+            child.y = node.y + root.height*1.5;
 
             positionNodes(child);
             
         })
-    }, 250);
+    }, 50);
 }
 
 function dataToTreeNodes(data) {
@@ -295,18 +283,19 @@ const animate = () => {
 
 
 onMounted(async () => {
+    const ratio = window.devicePixelRatio;
+    const width = 1200;
+    const height = 600;
+
     canvas = document.getElementById("canv");
     ctx = canvas.getContext('2d');
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight*1.5;
+    canvas.width = width * ratio;
+    canvas.height = height * ratio;
 
-    const interFont = new FontFace("Inter", "url(https://fonts.gstatic.com/s/inter/v18/UcCm3FwrK3iLTcvnUwgT9nA2.woff2)");
-    
-    interFont.load().then((font) => {
-        document.fonts.add(font);
-        ctx.font = "30px Inter";
-    });
+    canvas.style.width = width + "px";
+    canvas.style.height = height + "px";
+    ctx.scale(ratio, ratio)
 
     canvas.addEventListener("mousedown", () => {
         mouseDown = true;
@@ -322,12 +311,19 @@ onMounted(async () => {
         mouse.y = e.offsetY;
     })
 
-
+    const params = getQueryParams();
     const nodeData = await Axios.get("https://localhost:8443/nodes");
     console.log("Node Data: ", nodeData.data);
 
     points = dataToTreeNodes(nodeData.data);
-    root = points.filter(point => point.parentid == null)[0];
+
+    if (params.id == undefined) {
+        root = points.filter(point => point.parentid == null)[0];
+    }
+    else {
+        root = points.filter(point => point.id == params.id)[0];
+        document.title = root.text;
+    }
 
     // Initialize Parents of All Nodes
     for (let point of points) {
@@ -348,13 +344,14 @@ onMounted(async () => {
 
 <style scope>
 
+#canv {
+    border: 2px solid red;
+}
+
 .container {
     display: flex;
     flex-direction: column;
     align-items: center;
-}
-
-#canv {
-    border: 2px solid red;
+    border-bottom: 2px solid var(--dark-green);
 }
 </style>
