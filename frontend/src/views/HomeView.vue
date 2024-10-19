@@ -1,52 +1,75 @@
 <script setup>
-
 const redirectToSignup = () => {
-	window.location.pathname = '/signup';
-}
+	window.location.pathname = "/signup";
+};
 
 const redirectToAbout = () => {
-	window.location.pathname = '/about';
-}
-
+	window.location.pathname = "/about";
+};
 </script>
 
 <template>
 	<div class="top-section">
-		<img class="bg-img" src="../../public/home-bg.jpg" alt="Background Image">
+		<img
+			class="bg-img"
+			src="../../public/home-bg.jpg"
+			alt="Background Image"
+		/>
 		<h1>Learn To Program More Easily Than Ever Before</h1>
-		<p>Learning to program is hard and it's even harder to figure out where to start. The Programming Tree is designed to eliminate this difficulty</p>
+		<p>
+			Learning to program is hard and it's even harder to figure out where
+			to start. The Programming Tree is designed to eliminate this
+			difficulty
+		</p>
 		<button @click="redirectToSignup()">Create Account/Register</button>
 	</div>
 
 	<div class="section-two">
-		<h1>You Success Matters And We Acknowledge That With Our Easy-To-Understand Material</h1>
+		<h1>
+			You Success Matters And We Acknowledge That With Our
+			Easy-To-Understand Material
+		</h1>
 	</div>
 
 	<div class="section-three reusable-section">
 		<div>
 			<h1>Progress Through A Tree-Like Structure</h1>
-			<p>The tree structure of our app With makes it so that you can focus on actually learning and without having to deal with the complexities of figuring out what you even need to learn and when to learn it.</p>
+			<p>
+				The tree structure of our app With makes it so that you can
+				focus on actually learning and without having to deal with the
+				complexities of figuring out what you even need to learn and
+				when to learn it.
+			</p>
 		</div>
-		<img src="https://i.giphy.com/media/dxCT5ok6OM7MS5zAqA/giphy.gif" alt="Tree Image">
+		<img
+			src="https://i.giphy.com/media/dxCT5ok6OM7MS5zAqA/giphy.gif"
+			alt="Tree Image"
+		/>
 	</div>
 
 	<div class="section-four reusable-section">
-		<img src="../../public/youtube-img.png" alt="Some Image">
+		<img src="../../public/youtube-img.png" alt="Some Image" />
 		<div>
 			<h1>Find Help From YouTube</h1>
-			<p>One of the best ways to teach yourself to program is to lookup YouTube tutorials. That's why we link many of the nodes within our tree to useful YouTube videos and playlists</p>
+			<p>
+				One of the best ways to teach yourself to program is to lookup
+				YouTube tutorials. That's why we link many of the nodes within
+				our tree to useful YouTube videos and playlists
+			</p>
 		</div>
 	</div>
 
 	<div class="section-five">
-		<img class="code-img" src="../../public/code-img.png" alt="Code Image">
+		<img
+			class="code-img"
+			src="../../public/code-img.png"
+			alt="Code Image"
+		/>
 		<button @click="redirectToAbout()">Learn More About Us</button>
 	</div>
-	
 </template>
 
 <style scoped>
-
 * {
 	text-align: center;
 }
@@ -98,7 +121,6 @@ img.bg-img {
 	background-color: var(--mid-green);
 }
 
-
 .section-two {
 	display: flex;
 	align-items: center;
@@ -113,7 +135,6 @@ img.bg-img {
 	color: white;
 	width: 800px;
 }
-
 
 .reusable-section {
 	display: flex;
@@ -160,9 +181,7 @@ img.bg-img {
 	width: calc(300px * 1.75);
 	border-radius: 0px;
 	transform: skewX(10deg) rotateY(10deg);
-
 }
-
 
 .section-five {
 	display: flex;
@@ -195,5 +214,4 @@ img.bg-img {
 	box-shadow: 10px 10px 0px 0px;
 	transform: translate(-10px, -10px);
 }
-
 </style>

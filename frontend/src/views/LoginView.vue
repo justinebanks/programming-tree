@@ -1,8 +1,6 @@
 <script setup>
-import axios from 'axios';
+import axios from "axios";
 import { ref } from "vue";
-
-
 
 // Define form field refs
 const username = ref("");
@@ -10,120 +8,120 @@ const password = ref("");
 const msg = ref("");
 
 async function registerUser(event) {
-    // Prevent form from reloading the page
-    event.preventDefault();
-    
-    // Reset error and success messages
-    msg.value = '';
+	// Prevent form from reloading the page
+	event.preventDefault();
 
-    try {
-        // Send POST request to the backend login endpoint
-        const response = await axios.post('https://localhost:8443/login', {
-            username: username.value,
-            password: password.value, // Only username and password for login
-        });
+	// Reset error and success messages
+	msg.value = "";
 
-        msg.value = response.data;
-        console.log(response.data);
+	try {
+		// Send POST request to the backend login endpoint
+		const response = await axios.post("https://localhost:8443/login", {
+			username: username.value,
+			password: password.value, // Only username and password for login
+		});
 
-    } catch (error) {
-        // Handle errors (e.g., validation issues or server problems)
-        msg.value = error.response ? error.response.data.msg : 'An error occurred!';
-        console.error(error);
-    }
+		msg.value = response.data;
+		console.log(response.data);
+	} catch (error) {
+		// Handle errors (e.g., validation issues or server problems)
+		msg.value = error.response
+			? error.response.data.msg
+			: "An error occurred!";
+		console.error(error);
+	}
 }
 </script>
 
 <template>
-    <form @submit="registerUser"> <!-- Trigger registerUser function on form submission -->
-        <div class="input-container">
-            <h1>Log In</h1>
-            <input type="text"
-                id="username"
-                name="username"
-                v-model="username"
-                placeholder="Username"
-                required
-            />
+	<form @submit="registerUser">
+		<!-- Trigger registerUser function on form submission -->
+		<div class="input-container">
+			<h1>Log In</h1>
+			<input
+				type="text"
+				id="username"
+				name="username"
+				v-model="username"
+				placeholder="Username"
+				required
+			/>
 
-            <input type="password"
-                id="password"
-                name="password"
-                v-model="password" 
-                placeholder="Password"
-                required
-            />
+			<input
+				type="password"
+				id="password"
+				name="password"
+				v-model="password"
+				placeholder="Password"
+				required
+			/>
 
-            <input type="submit" value="Login"/>
-            <a href="/signup">Don't Have An Account? Register</a>
-        </div>
-        
-    </form>
+			<input type="submit" value="Login" />
+			<a href="/signup">Don't Have An Account? Register</a>
+		</div>
+	</form>
 
-    <!-- Display the success/error message -->
-    <p>{{ msg }}</p>
+	<!-- Display the success/error message -->
+	<p>{{ msg }}</p>
 </template>
 
 <style scoped>
-
 ::placeholder {
-  color: white;
-  opacity: 1; /* Firefox */
+	color: white;
+	opacity: 1; /* Firefox */
 }
 
-::-ms-input-placeholder { /* Edge 12 -18 */
-  color: white;
+::-ms-input-placeholder {
+	/* Edge 12 -18 */
+	color: white;
 }
-
 
 h1 {
-    color: white;
+	color: white;
 }
 
 form {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 75vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 75vh;
 }
 
 .input-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--mid-green);
-    padding: 60px;
-    border: 2px solid white;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background-color: var(--mid-green);
+	padding: 60px;
+	border: 2px solid white;
 }
 
 input:not([type="submit"]) {
-    width: 250px;
-    height: 30px;
-    border-radius: 20px;
-    border: 2px solid black;
-    padding-left: 20px;
-    margin: 5px;
-    background-color: var(--very-light-green);
-
+	width: 250px;
+	height: 30px;
+	border-radius: 20px;
+	border: 2px solid black;
+	padding-left: 20px;
+	margin: 5px;
+	background-color: var(--very-light-green);
 }
 
 input[type="submit"] {
-    width: 200px;
-    height: 35px;
-    margin: 20px;
-    background-color: var(--mid-orange);
-    border: 1px solid black;
-    border-radius: 20px;
+	width: 200px;
+	height: 35px;
+	margin: 20px;
+	background-color: var(--mid-orange);
+	border: 1px solid black;
+	border-radius: 20px;
 }
 
 input[type="submit"]:hover {
-    background-color: var(--light-yellow);
-    cursor: pointer;
+	background-color: var(--light-yellow);
+	cursor: pointer;
 }
 
 a {
-    color: white;
+	color: white;
 }
-
 </style>
