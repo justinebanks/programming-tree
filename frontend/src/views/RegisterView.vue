@@ -6,19 +6,12 @@
   const email = ref("");
   const password = ref("");
   const password2 = ref("");
-  const error = ref("");
-  const success = ref("");
+  const msg = ref("");
 
   async function registerUser() {
-        // Basic validation for matching passwords
-        if (password.value !== password2.value) {
-          error.value = "Passwords do not match!";
-          return;
-        }
-  
+        
         // Reset error and success messages
-        error.value = '';
-        success.value = '';
+        msg.value = '';
   
         try {
 
@@ -26,12 +19,14 @@
                 username: username.value,
                 email: email.value,
                 password: password.value,
+                password2:password2.value
 
             });
   
-            // Handle success - You may want to redirect the user after registration
-            success.value = 'Registration successful!';
+            
+            msg.value = response.data;
             console.log(response.data);
+            
         } catch (error) {
             // Handle errors (e.g., validation issues or server problems)
             error.value = error.response ? error.response.data.message : 'An error occurred!';
@@ -90,8 +85,8 @@
       </form>
   
       <!-- Optionally, display messages -->
-      <p v-if="error">{{ error }}</p>
-      <p v-if="success">{{ success }}</p>
+      <p v-if="msg">{{ msg }}</p>
+      
     </div>
 </template>
   

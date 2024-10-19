@@ -8,7 +8,7 @@
     </ul>
 </template>
 
-<style scope>
+<style scoped>
     ul {
         display: flex;
         justify-content: right;

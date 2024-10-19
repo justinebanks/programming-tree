@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const cors = require('cors');
+const bcrypt = require('bcrypt')
 const { Sequelize } = require('sequelize');
 
 // HTTPS and HTTP modules
@@ -53,6 +54,13 @@ fs.readFile(path.join(__dirname, '/config.ini'), 'utf-8', (err, data) => {
 app.use(express.static(path.join(__dirname, '../frontend/dist')));
 app.use(express.json());
 app.use(cors());
+
+function ensureAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.status(401).json({ msg: "You need to be logged in to access this resource." });
+}
 
 // Routes
 app.get('/', (req, res) => {
@@ -121,14 +129,85 @@ app.delete("/nodes/:id", async (req, res) => {
     }
 });
 
-// Test route for signup
-app.post("/signup", async (req, res) => {
-    const { username, email, password } = req.body;
+app.post("/login", async (req, res) => {
+    passport.authenticate('local', (err, user, info) => {
+        if (err) return next(err); // Handle errors
+        if (!user) return res.status(401).json({ msg: info.message }); // User not found or incorrect password
 
-    res.json({ msg: "Success", body: req.body });
-    await sequelize.query("INSERT INTO users (username, email, password) VALUES (?, ?, ?);", { replacements: [username, email, password] });
-    console.log(req.body);
+        req.logIn(user, (err) => {
+            if (err) return next(err);
+            return res.json({ msg: "Login successful!", user });
+        });
+    })(req, res, next)   
+
 });
+
+app.post("/signup", async (req, res) => {
+    console.log(req.body);  // Add this to see what's being sent in the request
+
+    let { username, email, password, password2 } = req.body;
+    let errors = [];
+
+    if (!username || !email || !password || !password2) {
+        return res.status(400).json({ msg: "Please enter all fields" });
+    }
+
+
+    if (password.length < 6) {
+        errors.push({ message: "Password should be at least 6 characters" });
+    }
+
+    if (password !== password2) {
+        errors.push({ message: "Passwords do not match" });
+    }
+
+    if (errors.length > 0) {
+        return res.json({ msg: errors });
+        console.log(errors);
+    }
+
+    try {
+        // Check if email is already registered
+        const [resultsEmail] = await sequelize.query('SELECT * FROM users WHERE email = ?', { replacements: [email] });
+
+        if (resultsEmail.length > 0) {
+            return res.json({ msg: "Email already registered" });
+        }
+
+        const [resultsUser] = await sequelize.query('SELECT * FROM users WHERE username = ?', { replacements: [username] });
+
+        if (resultsUser.length > 0) {
+            return res.json({ msg: "Username already registered" });
+        }
+
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Insert new user into the database
+        await sequelize.query(
+            'INSERT INTO users (username, email, password) VALUES (?, ?, ?);',
+            { replacements: [username, email, hashedPassword] }
+        );
+
+        res.json({ msg: "Registration successful!" });
+
+    } 
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ msg: "Server error" });
+    }
+});
+
+app.post("/logout", (req, res) => {
+    req.logout(function(err) {
+        if (err) { return next(err); }
+        res.json({ msg: "Logged out successfully!" });
+    });
+});
+
+
+
+
 
 //Start HTTPS server
 https.createServer(sslOptions, app).listen(8443, () => {
