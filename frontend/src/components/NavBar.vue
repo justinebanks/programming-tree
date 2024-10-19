@@ -1,55 +1,49 @@
 
 <template>
-    <ul>
-        <li>Programming Tree</li>
-        <li><a href="/">Home</a></li>
-        <li><a href="/tree">Tree</a></li>
-        <li><a href="/about">About</a></li>
-    </ul>
+    <div class="nav-bar">
+        <p>Programming Tree</p>
+        <a href="/">Home</a>
+        <a href="/tree">Tree</a>
+        <a href="/about">About</a>
+        <a class="holy-btn" href="/login">Login</a>
+        <a class="holy-btn" href="/signup">Sign Up</a>
+    </div>
 </template>
 
 <style scoped>
-    ul {
-        display: flex;
-        justify-content: right;
-        list-style-type: none;
-        
-        border-bottom: 2px solid var(--black);
-        padding: 20px;
-        
-    }
 
-    /* ul:hover {
-        background-color: var(--black);
-        transition: 0.3s;
-    } */
+.nav-bar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    border-bottom: 2px solid black;
+}
 
-    ul > li:first-child {
-        /* justify-self: flex-start; */
-        margin-right: 500px;
-        color: white;
-        font-size: 25px;
-        font-weight: bolder;
-    }
+p {
+    color: white;
+    font-size: 30px;
+    margin-right: auto;
+    margin-left: 10px;
+    padding: 10px;
+}
 
-    ul > li:not(:first-child) {
-        text-decoration: none;
-        padding: 15px;
-        border: 1px solid black;
-        margin-left: 60px;
-        background-color: var(--mid-green);
-        width: 100px;
-        text-align: center;
-        border-radius: 40px;
-    }
+a {
+    border: 2px solid white;
+    padding: 20px;
+    margin-right: 20px;
+    text-decoration: none;
+    color: white;
+    transition: 0.5s;
+}
 
-    ul > li:not(:first-child):hover {
-        background-color: var(--light-green);
-    }
+a.holy-btn {
+    background-color: var(--mid-orange);
+}
 
-    ul > li > a {
-        text-decoration: inherit;
-        color: white;
-        font-weight: bold;
-    }
+a:hover {
+    color: black;
+    background-color: white;
+}
+
 </style>
