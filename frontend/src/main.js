@@ -25,4 +25,4 @@ app.use(router);
 app.mount('#app');
 
 axios.defaults.baseURL = 'https://localhost:8443';  // Your backend URL
-axios.defaults.withCredentials = true;  // Ensure credentials like cookies are sent with every request
+axios.defaults.withCredentials = false;  // Ensure credentials like cookies are sent with every request
