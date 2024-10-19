@@ -18,27 +18,13 @@ const app = express();
 const initializePassport = require("./passports");
 
 
-app.use(session({
-    secret: 'cvxdbfgrt435t5rtutj',
-    resave: false,
-    saveUninitialized: false,
-}));
-app.use(passport.initialize());
-app.use(passport.session());
-
-initializePassport(passport)
-
-app.use(express.urlencoded({ extended : false}))
-
-
-
 // CORS options
-const corsOptions = {
-    origin: 'http://localhost:3000',  // Specify your frontend URL
-    credentials: true                 // Allow credentials (cookies, authorization headers)
+const corsOptions = { 
+    origin: '*',        // Specify your frontend URL
+    credentials: true   // Allow credentials (cookies, authorization headers)
 };
 
-app.use(cors(corsOptions));
+
 
 
 
@@ -80,10 +66,25 @@ fs.readFile(path.join(__dirname, '/config.ini'), 'utf-8', (err, data) => {
     }
 });
 
+
 // Middleware
 app.use(express.static(path.join(__dirname, '../frontend/dist')));
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOptions));
+
+app.use(session({
+    secret: 'cvxdbfgrt435t5rtutj',
+    resave: false,
+    saveUninitialized: false,
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+initializePassport(passport)
+
+app.use(express.urlencoded({ extended : false}))
+
+
 
 function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
@@ -100,6 +101,7 @@ app.get('/', (req, res) => {
 app.get("/nodes", async (req, res) => {
     const [results] = await sequelize.query('SELECT * FROM nodes;');
     console.log(results);
+    //res.header("Access-Control-Allow-Origin", ["*"]);
     res.json(results);
 });
 
@@ -187,13 +189,13 @@ app.post("/signup", async (req, res, next) => {
 
     try {
         // Check if email is already registered
-        const [resultsEmail] = await sequelize.query('SELECT * FROM users WHERE email = ?', { replacements: [email] });
+        const [resultsEmail] = await sequelize.query('SELECT * FROM users WHERE email = ?;', { replacements: [email] });
 
         if (resultsEmail.length > 0) {
             return res.status(400).json({ msg: "Email already registered" });
         }
 
-        const [resultsUser] = await sequelize.query('SELECT * FROM users WHERE username = ?', { replacements: [username] });
+        const [resultsUser] = await sequelize.query('SELECT * FROM users WHERE username = ?;', { replacements: [username] });
 
         if (resultsUser.length > 0) {
             return res.status(400).json({ msg: "Username already registered" });
@@ -211,7 +213,7 @@ app.post("/signup", async (req, res, next) => {
         const userId = result[0].id;  // Get the newly created user's ID
 
         // Retrieve the user object using the ID (for use in login)
-        const [newUser] = await sequelize.query('SELECT * FROM users WHERE id = ?', { replacements: [userId] });
+        const [newUser] = await sequelize.query('SELECT * FROM users WHERE id = ?;', { replacements: [userId] });
 
         // Log the user in after signup
         req.logIn(newUser[0], (err) => {
