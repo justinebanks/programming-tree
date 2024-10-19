@@ -54,6 +54,7 @@ class TreeNode {
         this.height = 100;
 
         this.isWrapper = false;
+        this.within = false;
         this.id = id
 
         this.text = "Test Text";
@@ -72,6 +73,10 @@ class TreeNode {
     }
 
     getParent() {
+        if (this.parentid == null) {
+            return null;
+        }
+
         const parents = points.filter(node => node.id == this.parentid);
 
         if (parents.length == 1) {
@@ -91,8 +96,8 @@ class TreeNode {
             ctx.strokeStyle = "white";
             //ctx.moveTo(this.x + this.width/2, this.y + this.height/2);
             //ctx.lineTo(currentNode.x + currentNode.width/2, currentNode.y + currentNode.height/2);
-            ctx.moveTo(this.x, this.y);
-            ctx.lineTo(this.parent.x, this.parent.y);
+            ctx.moveTo(this.x, this.y-50);
+            ctx.lineTo(this.parent.x, this.parent.y+50);
             ctx.closePath();
             ctx.stroke();
         }
@@ -105,7 +110,6 @@ class TreeNode {
         let level = TreeNode.getLevel(this);
         ctx.fillRect(this.x-((this.width+borderWidth)/2), this.y-((this.height+borderWidth)/2), this.width+borderWidth, this.height+borderWidth);
 
-        console.log(level, this.id);
         ctx.fillStyle = colors[level % colors.length]; //this.color;
         ctx.fillRect(this.x-(this.width/2), this.y-(this.height/2), this.width, this.height);
         // ctx.beginPath();
@@ -217,22 +221,19 @@ class TreeNode {
             }
         }
 
-        console.log(level);
+        //console.log(level);
         return level;
     }
 
 }
 
-function updateChildren(root) {
-
-    
-    for (let child of root.children) {
-        child.update()
-         
-        updateChildren(child);
+function updateChildren(top) {
+    for (let child of top.children) {
+        if ((top.id == root.id && child.within == true) || (top.id != root.id && child.within == false)) {
+            child.update();
+            updateChildren(child);
+        }
     }
-        
-    
 }
 
 // Positions Node Within the Node Tree According to the Root Node
@@ -243,8 +244,11 @@ function positionNodes(node) {
             root.y = 100;
         }
 
-        node.children.forEach((child, index) => {
-            const relX = canvas.width/(node.children.length+1)
+        let visibleChildren = node.children.filter(child => (node.id == root.id && child.within == true) || (node.id != root.id && child.within == false));
+        console.log(visibleChildren);
+
+        visibleChildren.forEach((child, index) => {
+            const relX = canvas.width/(visibleChildren.length+1)
 
             child.x = relX * (index+1) + (node.x - canvas.width/2);
             child.y = node.y + 150;
@@ -266,8 +270,10 @@ function dataToTreeNodes(data) {
             randRange(0, canvas.height), 
             node.color);
         
-        if (node.wrapper == true) newNode.isWrapper = true;
+        newNode.isWrapper = node.wrapper;
+        newNode.within = node.within;
         newNode.text = node.name;
+
 
         nodes.push(newNode);
     }
@@ -292,8 +298,8 @@ onMounted(async () => {
     canvas = document.getElementById("canv");
     ctx = canvas.getContext('2d');
 
-    //canvas.width = window.innerWidth;
-    //canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight*1.5;
 
     const interFont = new FontFace("Inter", "url(https://fonts.gstatic.com/s/inter/v18/UcCm3FwrK3iLTcvnUwgT9nA2.woff2)");
     

@@ -15,7 +15,7 @@ CREATE TABLE nodes (
 INSERT INTO nodes (parentId, name, wrapper, button, within)
 VALUES
     (NULL, 'Programming Tree', 'true', 'false', 'false'),
-    (1, 'Console Applications', 'true', 'true', 'false'),
+    (1, 'Console Applications', 'true', 'true', 'true'),
 	(2, 'Web Development', 'false', 'false', 'false'),
     (2, 'Data Science', 'false', 'false', 'false'),
     (2, 'Datatypes', 'false', 'true', 'true'),

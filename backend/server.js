@@ -61,6 +61,7 @@ app.get('/', (req, res) => {
 
 app.get("/nodes", async (req, res) => {
     const [results] = await sequelize.query('SELECT * FROM nodes;');
+    console.log(results);
     res.json(results);
 });
 
