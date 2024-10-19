@@ -120,8 +120,8 @@ h1 {
     position: absolute;
     top: 15%;
     left: 20px;
-    background-color: #25562e;
-    color: #a8ca58;
+    /* background-color: #25562e; */
+    color: var(--white);
     padding: 10px 20px;
     border-radius: 5px;
     font-size: 24px;
@@ -142,11 +142,11 @@ h2 {
 
 p {
     text-align: center;
-    width: 80%;
-    margin: 20px 0;
+    width: 80vw;
+    margin: 5px 0;
     padding: 20px;
-    background-color: #394a50;
-    color: #c7cfcc;
+    background-color: var(--dark-blue);
+    color: white;
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     font-size: 15px;
@@ -154,7 +154,7 @@ p {
 }
 
 p.code {
-    background-color: #242e31;
+    background-color: var(--dark-green);
 }
 
 </style>
