@@ -12,7 +12,7 @@ passport.use(new LocalStrategy({
 }, async (username, password, done) => {
     try {
         // Check if the user exists
-        const [user] = await sequelize.query('SELECT * FROM users WHERE username = ? OR email = ?', { replacements: [username, username] });
+        const [user] = await sequelize.query('SELECT * FROM users WHERE username = ? OR email = ?;', { replacements: [username, username] });
 
         if (!user.length) {
             return done(null, false, { message: 'No user found with this username/email' });
