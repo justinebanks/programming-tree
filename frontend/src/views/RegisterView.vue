@@ -8,6 +8,8 @@
   const password2 = ref("");
   const msg = ref("");
 
+  axios.defaults.withCredentials = true;
+
   async function registerUser() {
         
         // Reset error and success messages

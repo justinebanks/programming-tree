@@ -1,9 +1,11 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const cors = require('cors');
+const session = require('express-session');
 const bcrypt = require('bcrypt')
+const passport = require('passport');
 const { Sequelize } = require('sequelize');
+const cors = require('cors');
 
 // HTTPS and HTTP modules
 const https = require('https');
@@ -11,6 +13,34 @@ const http = require('http');
 
 // Initialize Express app
 const app = express();
+
+
+const initializePassport = require("./passports");
+
+
+app.use(session({
+    secret: 'cvxdbfgrt435t5rtutj',
+    resave: false,
+    saveUninitialized: false,
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+initializePassport(passport)
+
+app.use(express.urlencoded({ extended : false}))
+
+
+
+// CORS options
+const corsOptions = {
+    origin: 'http://localhost:3000',  // Specify your frontend URL
+    credentials: true                 // Allow credentials (cookies, authorization headers)
+};
+
+app.use(cors(corsOptions));
+
+
 
 // Read SSL certificate and private key from 'sslcert' directory
 const sslOptions = {
@@ -129,29 +159,19 @@ app.delete("/nodes/:id", async (req, res) => {
     }
 });
 
-app.post("/login", async (req, res) => {
-    passport.authenticate('local', (err, user, info) => {
-        if (err) return next(err); // Handle errors
-        if (!user) return res.status(401).json({ msg: info.message }); // User not found or incorrect password
+app.post("/login", passport.authenticate('local', {
+    successRedirect: "/users/dashboard",
+    failureRedirect: "/users/login",
+    failureFlash: true
+}));
 
-        req.logIn(user, (err) => {
-            if (err) return next(err);
-            return res.json({ msg: "Login successful!", user });
-        });
-    })(req, res, next)   
-
-});
-
-app.post("/signup", async (req, res) => {
-    console.log(req.body);  // Add this to see what's being sent in the request
-
+app.post("/signup", async (req, res, next) => {
     let { username, email, password, password2 } = req.body;
     let errors = [];
 
     if (!username || !email || !password || !password2) {
         return res.status(400).json({ msg: "Please enter all fields" });
     }
-
 
     if (password.length < 6) {
         errors.push({ message: "Password should be at least 6 characters" });
@@ -162,8 +182,7 @@ app.post("/signup", async (req, res) => {
     }
 
     if (errors.length > 0) {
-        return res.json({ msg: errors });
-        console.log(errors);
+        return res.status(400).json({ msg: errors });
     }
 
     try {
@@ -171,38 +190,53 @@ app.post("/signup", async (req, res) => {
         const [resultsEmail] = await sequelize.query('SELECT * FROM users WHERE email = ?', { replacements: [email] });
 
         if (resultsEmail.length > 0) {
-            return res.json({ msg: "Email already registered" });
+            return res.status(400).json({ msg: "Email already registered" });
         }
 
         const [resultsUser] = await sequelize.query('SELECT * FROM users WHERE username = ?', { replacements: [username] });
 
         if (resultsUser.length > 0) {
-            return res.json({ msg: "Username already registered" });
+            return res.status(400).json({ msg: "Username already registered" });
         }
 
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Insert new user into the database
-        await sequelize.query(
-            'INSERT INTO users (username, email, password) VALUES (?, ?, ?);',
+        // Insert new user into the database and retrieve the ID of the new user
+        const [result] = await sequelize.query(
+            'INSERT INTO users (username, email, password) VALUES (?, ?, ?) RETURNING id;',
             { replacements: [username, email, hashedPassword] }
         );
 
-        res.json({ msg: "Registration successful!" });
+        const userId = result[0].id;  // Get the newly created user's ID
 
-    } 
-    catch (err) {
+        // Retrieve the user object using the ID (for use in login)
+        const [newUser] = await sequelize.query('SELECT * FROM users WHERE id = ?', { replacements: [userId] });
+
+        // Log the user in after signup
+        req.logIn(newUser[0], (err) => {
+            if (err) return next(err);
+            return res.redirect('/dashboard');
+        });
+
+    } catch (err) {
         console.error(err);
-        res.status(500).json({ msg: "Server error" });
+        return res.status(500).json({ msg: "Server error" });
     }
 });
+
 
 app.post("/logout", (req, res) => {
     req.logout(function(err) {
         if (err) { return next(err); }
         res.json({ msg: "Logged out successfully!" });
     });
+});
+
+
+app.get("/dashboard", ensureAuthenticated, (req, res) => {
+    res.json({ msg: "Welcome to the protected route!", user: req.user });
+    console.log(req.user);
 });
 
 
