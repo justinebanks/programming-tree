@@ -295,7 +295,7 @@ onMounted(async () => {
 
     canvas.style.width = width + "px";
     canvas.style.height = height + "px";
-    ctx.scale(ratio, ratio)
+    ctx.scale(ratio, ratio) // Fix Blurry Canvas Text: https://stackoverflow.com/questions/15661339/how-do-i-fix-blurry-text-in-my-html5-canvas
 
     canvas.addEventListener("mousedown", () => {
         mouseDown = true;
