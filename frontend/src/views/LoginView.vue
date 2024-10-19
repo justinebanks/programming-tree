@@ -16,7 +16,7 @@ async function registerUser(event) {
 
     try {
         // Send POST request to the backend login endpoint
-        const response = await axios.post('https://localhost:8443/signin', {
+        const response = await axios.post('https://localhost:8443/login', {
             username: username.value,
             password: password.value, // Only username and password for login
         });
