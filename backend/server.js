@@ -190,9 +190,13 @@ app.post('/login', (req, res, next) => {
         req.login(user, function(err) {
             if (err) { return next(err); }
 
-            // Log session after login
-            console.log("Session after login:", req.session);
-            return res.json({ msg: "Authenticated", user });
+            if (req.user) {
+                // Return a success response with a token or cookie
+                res.json({ token: ' authenticated-token' });
+              } else {
+                res.json({ error: 'Invalid username or password' });
+              }
+            
         });
     })(req, res, next);
 });
@@ -281,6 +285,55 @@ app.get('/status', (req, res) => {
         session: req.session
     });
 });
+
+
+// Get all threads
+app.get("/api/threads", async (req, res) => {
+    try {
+        const [threads] = await sequelize.query("SELECT * FROM threads ORDER BY created_at DESC;");
+        res.json(threads);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to fetch threads." });
+    }
+});
+
+// Get all posts in a specific thread
+app.get("/api/threads/:id/posts", async (req, res) => {
+    const threadId = req.params.id;
+    try {
+        const [posts] = await sequelize.query(
+            "SELECT * FROM posts WHERE thread_id = ? ORDER BY created_at ASC;",
+            { replacements: [threadId] }
+        );
+        res.json(posts);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to fetch posts." });
+    }
+});
+
+// Add a new post to a thread
+app.post("/api/threads/:id/posts", async (req, res) => {
+    const threadId = req.params.id;
+    const { author, content } = req.body;
+
+    if (!author || !content) {
+        return res.status(400).json({ error: "Author and content are required." });
+    }
+
+    try {
+        await sequelize.query(
+            "INSERT INTO posts (thread_id, author, content) VALUES (?, ?, ?);",
+            { replacements: [threadId, author, content] }
+        );
+        res.json({ msg: "Post created successfully." });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to create post." });
+    }
+});
+
 
 // Start HTTPS server
 https.createServer(sslOptions, app).listen(8443, () => {
