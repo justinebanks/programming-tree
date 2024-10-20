@@ -348,6 +348,25 @@ app.post("/api/threads/:id/posts", async (req, res) => {
     }
 });
 
+app.post("/api/forum", async (req, res) => {
+    const { author, title } = req.body;
+
+    if (!author || !title) {
+        return res.status(400).json({ error: "Author and Title are required."});
+    }
+
+    try {
+        await sequelize.query(
+            "INSERT INTO threads (title, author) VALUES (?, ?);", 
+            { replacements: [title, author] }
+        );
+        res.json({ msg: "Thread created successfully." });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to create post." });
+    }
+
+});
 
 // Start HTTPS server
 https.createServer(sslOptions, app).listen(8443, () => {
