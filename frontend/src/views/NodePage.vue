@@ -101,7 +101,7 @@ onMounted(async () => {
 <template>
     
 	<div class="container">
-		<h1 v-if="!isLoading && !error" :style="{ backgroundColor: color }">
+		<h1 class="page-title" v-if="!isLoading && !error" :style="{ backgroundColor: color }">
 			{{ name }}
 		</h1>
 		<h2>
@@ -112,14 +112,10 @@ onMounted(async () => {
 		</h2>
 
 		<div v-for="segment in segments">
-			<p class="text" v-if="segment.slice(0, 6) == ':text:'">
-				{{ segment.slice(6, -1) }}
-			</p>
-			<!-- <pre v-else-if="segment.slice(0, 6) == ':code:'">
-                <code>{{ segment.slice(6, -1) }}</code>
-			</pre> -->
-            <Code v-else-if="segment.slice(0, 6) == ':code:'">{{ segment.slice(6, -1) }}</Code>
-			<p v-else>INVALID SEGMENT</p>
+			<p class="text" v-if="segment.slice(0, 6) == ':text:'">{{ segment.slice(6) }}</p>
+            <Code v-else-if="segment.slice(0, 6) == ':code:'">{{ segment.slice(6) }}</Code>
+            <h1 class="head" v-else-if="segment.slice(0, 6) == ':head:'">{{ segment.slice(6) }}</h1>
+            <p v-else>INVALID SEGMENT</p>
 		</div>
 	</div>
 </template>
@@ -131,12 +127,12 @@ onMounted(async () => {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	height: 100vh;
 	background-color: black;
+    min-height: 100vh;
 	font-family: "Arial", sans-serif;
 }
 
-h1 {
+.page-title {
 	position: absolute;
 	top: 15%;
 	left: 20px;
@@ -164,7 +160,7 @@ a {
     color: #73bed3;
 }
 
-p {
+.text {
 	text-align: left;
 	width: 80vw;
 	margin: 5px 0;
@@ -175,6 +171,11 @@ p {
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 	font-size: 15px;
 	line-height: 1.6;
+}
+
+.head {
+    width: 80vw;
+    color: white;
 }
 
 

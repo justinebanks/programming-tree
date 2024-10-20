@@ -122,8 +122,9 @@ app.get("/nodes/:id", async (req, res) => {
     }
 });
 
+
 app.post("/nodes/:id", async (req, res) => {
-    const { text, isCode } = req.body;
+    const { text, type } = req.body;
     const [results] = await sequelize.query(
         "SELECT * FROM nodes WHERE id = ?;",
         { replacements: [req.params["id"]] }
@@ -133,7 +134,7 @@ app.post("/nodes/:id", async (req, res) => {
         const node = results[0];
         let encSegments = JSON.parse(decodeURI(node.segments));
 
-        let plainString = `:${isCode ? "code" : "text"}:${text}`;
+        let plainString = `:${type}:${text}`;
         let encodedFinalText = Buffer.from(plainString).toString("base64");
         encSegments.push(encodedFinalText);
 
