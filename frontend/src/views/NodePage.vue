@@ -114,6 +114,7 @@ onMounted(async () => {
 			<p class="text" v-if="segment.slice(0, 6) == ':text:'">{{ segment.slice(6) }}</p>
             <Code v-else-if="segment.slice(0, 6) == ':code:'">{{ segment.slice(6) }}</Code>
             <h1 class="head" v-else-if="segment.slice(0, 6) == ':head:'">{{ segment.slice(6) }}</h1>
+            <iframe class="yvid" v-else-if="segment.slice(0, 6) == ':yvid:'" height="400" :src="'https://www.youtube.com/embed/' + segment.slice(6)" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             <p v-else>INVALID SEGMENT</p>
 		</div>
 	</div>
@@ -178,5 +179,10 @@ a {
     color: white;
 }
 
+.yvid {
+    margin: 30px;
+    width: 80vw;
+    border: 2px solid white;
+}
 
 </style>
