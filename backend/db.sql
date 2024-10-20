@@ -39,10 +39,14 @@ VALUES
 	(23, 'APIs', 'false', 'false', 'false'),
 	(6, 'Advanced Algorithms', 'false', 'false', 'false'),
 	(25, 'AI', 'false', 'false', 'false');
+
 -- Default Value for 'segment' Column
 UPDATE nodes
 SET segments = '%5B%22OnRleHQ6VGVzdCBVUkwgRW5jb2RlZCBKU09OIEVsZW1lbnQgTnVtYmVyIE9uZQ==%22,%22OmNvZGU6ZGVmIHRleHRfZnVuYygpOgoJcHJpbnQoNjApCg==%22%5D';
 
+UPDATE nodes
+SET segments = '%5B%22OnRleHQ6VGVzdCBVUkwgRW5jb2RlZCBKU09OIEVsZW1lbnQgTnVtYmVyIE9uZQ==%22,%22OmNvZGU6ZGVmIHRleHRfZnVuYygpOgoJcHJpbnQoNjApCg==%22,%22OmNvZGU6ZnVuY3Rpb24gdGVzdEZ1bmN0aW9uKCkgewoJY29uc29sZS5sb2coJ3Rlc3RpbmcgMSAyIDMnKTsKfQ==%22,%22OmhlYWQ6VGVzdCBIZWFkZXI=%22,%22OnRleHQ6TG9yZW0gaXBzdW0sIGRvbG9yIHNpdCBhbWV0IGNvbnNlY3RldHVyIGFkaXBpc2ljaW5nIGVsaXQuIE5paGlsIHNpbnQgbmVzY2l1bnQgdmVsaXQgaWxsdW0gZGlzdGluY3Rpbz8gU2ltaWxpcXVlIG1vbGVzdGlhcyBxdWlkZW0gbm9zdHJ1bSBuYW0gY3VtcXVlIHBvc3NpbXVzIHZlbGl0LCBkZWJpdGlzIGVhIHNlZCByYXRpb25lIGFiIG9mZmljaWlzIGlwc3VtIGl0YXF1ZQ==%22,%22Onl2aWQ6Rld5aVl6Z1BOaTQ=%22%5D'
+WHERE id = 15;
 
 
 DROP TABLE IF EXISTS users;
