@@ -298,9 +298,23 @@ app.get("/api/threads", async (req, res) => {
     }
 });
 
+app.get("/api/threads/:id", async (req, res) => {
+    const [results] = await sequelize.query(
+        "SELECT * FROM threads WHERE id = ?;",
+        { replacements: [req.params["id"]] }
+    );
+    if (results.length > 0) {
+        res.json(results[0]);
+    } else {
+        res.status(404).json({ error: "Thread Not Found" });
+    }
+});
+
+
 // Get all posts in a specific thread
 app.get("/api/threads/:id/posts", async (req, res) => {
     const threadId = req.params.id;
+    
     try {
         const [posts] = await sequelize.query(
             "SELECT * FROM posts WHERE thread_id = ? ORDER BY created_at ASC;",
@@ -317,7 +331,7 @@ app.get("/api/threads/:id/posts", async (req, res) => {
 app.post("/api/threads/:id/posts", async (req, res) => {
     const threadId = req.params.id;
     const { author, content } = req.body;
-
+    console.log("Making Post");
     if (!author || !content) {
         return res.status(400).json({ error: "Author and content are required." });
     }
