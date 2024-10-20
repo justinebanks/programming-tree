@@ -3,6 +3,7 @@
 		<p>Programming Tree</p>
 		<a href="/">Home</a>
 		<a href="/tree">Tree</a>
+		<a href = "/forum">Forums</a>
 		<a href="/about">About</a>
 		<a class="holy-btn" href="/login">Login</a>
 		<a class="holy-btn" href="/signup">Sign Up</a>
