@@ -19,14 +19,15 @@ const fetchParentNodes = async (parentId) => {
 				`https://localhost:8443/nodes/${parentId}`
 			);
 
-			console.log("Parent node response:", response); // Debug: log parent node response
+			//console.log("Parent node response:", response); // Debug: log parent node response
 
 			// Check if response contains data and access it safely
 			if (response.data) {
 				const parentNode = response.data;
 
 				// Add the parent name to the parents array
-				parents.value.push(parentNode.name);
+                console.log("Parent Node: ", parentNode.name);
+				parents.value.splice(0, 0, parentNode);
 
 				// Recursively fetch the parent of the current parent node
 				await fetchParentNodes(parentNode.parentid);
@@ -38,6 +39,16 @@ const fetchParentNodes = async (parentId) => {
 		console.error("Error fetching parent nodes:", err);
 	}
 };
+
+const getNodeLink = (node) => {
+    if (node.wrapper) {
+        return `/tree?id=${node.id}`;
+    }
+    else {
+        return `/node/${node.id}`;
+    }
+}
+
 
 onMounted(async () => {
 	Axios.defaults.withCredentials = false;
@@ -91,10 +102,13 @@ onMounted(async () => {
 		<h1 v-if="!isLoading && !error" :style="{ backgroundColor: color }">
 			{{ name }}
 		</h1>
-		<h2 v-if="parents.length">
-			Root > {{ parents.join(" > ") }} > {{ name }}
+		<h2>
+			<a href="/tree">Root</a> > 
+            <span v-for="parent in parents">
+                <a :href="getNodeLink(parent)">{{ parent.name }}</a> > 
+            </span> {{ name }}
 		</h2>
-		<h2 v-else>Root > {{ name }}</h2>
+		<!-- <h2 v-else><a href="/tree">Root</a> > {{ name }}</h2> -->
 
 		<p class="text">
 			"The quick brown fox jumps over the lazy dog" is an English-language
@@ -151,6 +165,10 @@ h2 {
 	background-color: #253a5e;
 	border-radius: 5px;
 	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+a {
+    color: #73bed3;
 }
 
 p {
