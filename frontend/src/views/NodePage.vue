@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import Axios from "axios";
+import Code from "../components/Code.vue";
 
 const name = ref("");
 const color = ref("");
@@ -52,6 +53,7 @@ const getNodeLink = (node) => {
 
 onMounted(async () => {
 	Axios.defaults.withCredentials = false;
+    hljs.highlightAll();
 
 	try {
 		let id = window.location.pathname.split("/")[2];
@@ -98,6 +100,7 @@ onMounted(async () => {
 </script>
 
 <template>
+    
 	<div class="container">
 		<h1 v-if="!isLoading && !error" :style="{ backgroundColor: color }">
 			{{ name }}
@@ -124,9 +127,10 @@ onMounted(async () => {
 			<p class="text" v-if="segment.slice(0, 6) == ':text:'">
 				{{ segment.slice(6, -1) }}
 			</p>
-			<p class="code" v-else-if="segment.slice(0, 6) == ':code:'">
-				{{ segment.slice(6, -1) }}
-			</p>
+			<!-- <pre v-else-if="segment.slice(0, 6) == ':code:'">
+                <code>{{ segment.slice(6, -1) }}</code>
+			</pre> -->
+            <Code v-else-if="segment.slice(0, 6) == ':code:'">{{ segment.slice(6, -1) }}</Code>
 			<p v-else>INVALID SEGMENT</p>
 		</div>
 	</div>
@@ -139,7 +143,7 @@ onMounted(async () => {
 	align-items: center;
 	justify-content: center;
 	height: 100vh;
-	background-color: #10141f;
+	background-color: black;
 	font-family: "Arial", sans-serif;
 }
 
@@ -162,9 +166,9 @@ h2 {
 	color: #73bed3;
 	font-size: 18px;
 	padding: 5px 10px;
-	background-color: #253a5e;
+	background-color: var(--dark-blue);
 	border-radius: 5px;
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 2px 6px var(--light-blue);
 }
 
 a {
@@ -172,7 +176,7 @@ a {
 }
 
 p {
-	text-align: center;
+	text-align: left;
 	width: 80vw;
 	margin: 5px 0;
 	padding: 20px;
@@ -184,7 +188,5 @@ p {
 	line-height: 1.6;
 }
 
-p.code {
-	background-color: var(--dark-green);
-}
+
 </style>
