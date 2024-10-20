@@ -5,6 +5,7 @@ const { Sequelize } = require('sequelize');
 const path = require('path');
 const fs = require('fs');
 
+
 // Define a function to initialize passport strategies
 let sequelize = null;
 let configData = {};
@@ -68,10 +69,12 @@ function initializePassport(passport) {
     }));
 
     passport.serializeUser((user, done) => {
+        console.log("Serializing User:", user.id); // Log user ID
         done(null, user.id);
     });
-
+    
     passport.deserializeUser(async (id, done) => {
+        console.log("Deserializing User by ID:", id); // Log deserialization
         try {
             const [user] = await sequelize.query('SELECT * FROM users WHERE id = ?', { replacements: [id] });
             done(null, user[0]);

@@ -16,13 +16,19 @@ async function registerUser(event) {
 
 	try {
 		// Send POST request to the backend login endpoint
-		const response = await axios.post("https://localhost:8443/login", {
-			username: username.value,
-			password: password.value, // Only username and password for login
-		});
+		const response = await axios.post(
+    		'https://localhost:8443/login',
+    		{ username: this.username, password: this.password },
+    		{ withCredentials: true }
+		);
 
-		msg.value = response.data;
+		msg.value = response.data.msg;
 		console.log(response.data);
+        if (msg.value === 'success') {
+            
+            
+            window.location.href = '/dashboard';
+        }
 	} catch (error) {
 		// Handle errors (e.g., validation issues or server problems)
 		msg.value = error.response
