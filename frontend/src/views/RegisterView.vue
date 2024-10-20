@@ -2,7 +2,7 @@
 import Axios from "axios";
 import { ref } from "vue";
 
-Axios.defaults.withCredentials = true;
+
 
 const username = ref("");
 const email = ref("");
@@ -24,9 +24,16 @@ async function registerUser() {
 			password2: password2.value,
 		});
 
-		msg.value = response.data;
+		msg.value = response.data.msg;
 		console.log(response.data);
+
+    if (msg.value === 'success') {
+      // Redirect to login page
+      window.location.href = '/login';
+    }
+
 	} catch (error) {
+    
 		// Handle errors (e.g., validation issues or server problems)
 		error.value = error.response
 			? error.response.data.message
