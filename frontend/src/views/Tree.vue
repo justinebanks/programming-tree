@@ -237,9 +237,12 @@ function updateChildren(top) {
 // Positions Node Within the Node Tree According to the Root Node
 function positionNodes(node) {
 	setTimeout(() => {
+        const ratio = window.devicePixelRatio;
+        const width = canvas.width / ratio;
+
 		if (node.id == root.id) {
-			root.x = canvas.width / 2 / window.devicePixelRatio;
-			root.y = 100;
+			root.x = width / 2;
+			root.y = 100 / ratio;
 		}
 
 		let visibleChildren = node.children.filter(
@@ -250,12 +253,14 @@ function positionNodes(node) {
 		console.log(visibleChildren);
 
 		visibleChildren.forEach((child, index) => {
-			const relX = canvas.width / (visibleChildren.length + 1);
+            const relX = width / (visibleChildren.length+1);
 
-			child.x = relX * (index + 1) + (node.x - canvas.width / 2);
-			child.y = node.y + root.height * 1.5;
+            child.x = relX * (index+1) + (node.x - (width/2));
+            child.x = child.x + (node.x - child.x) / 3;
+            child.y = node.y + (200 / ratio);
 
-			positionNodes(child);
+            positionNodes(child);
+
 		});
 	}, 50);
 }

@@ -1,4 +1,4 @@
-# SSL Certificates
+# SSL Certificates (Remember git rm -r --cache <folder>)
 sslcert/*
 config.ini
 
