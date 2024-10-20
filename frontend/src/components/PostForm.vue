@@ -30,13 +30,14 @@ export default defineComponent({
         content: content.value,
       };
 
-      await fetch(`http://localhost:5000/api/threads/${props.threadId}/posts`, {
+      await fetch(`https://localhost:8443/api/threads/${props.threadId}/posts`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(newPost),
       });
+      console.log("Posted")
 
       // Clear form fields after submission
       author.value = '';

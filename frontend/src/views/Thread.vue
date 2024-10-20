@@ -21,7 +21,7 @@
       return {
         thread: {},
         posts: [],
-        threadId: this.id,
+        threadId: parseInt(this.id),
       };
     },
     methods: {
