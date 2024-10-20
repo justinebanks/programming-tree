@@ -53,7 +53,6 @@ const getNodeLink = (node) => {
 
 onMounted(async () => {
 	Axios.defaults.withCredentials = false;
-    hljs.highlightAll();
 
 	try {
 		let id = window.location.pathname.split("/")[2];
@@ -111,17 +110,6 @@ onMounted(async () => {
                 <a :href="getNodeLink(parent)">{{ parent.name }}</a> > 
             </span> {{ name }}
 		</h2>
-		<!-- <h2 v-else><a href="/tree">Root</a> > {{ name }}</h2> -->
-
-		<p class="text">
-			"The quick brown fox jumps over the lazy dog" is an English-language
-			pangram – a sentence that contains all the letters of the alphabet.
-			The phrase is commonly used for touch-typing practice, testing
-			typewriters and computer keyboards, displaying examples of fonts,
-			and other applications involving text where the use of all letters
-			in the alphabet is desired.
-		</p>
-		<p class="text">Parent ID: {{ parentId }}</p>
 
 		<div v-for="segment in segments">
 			<p class="text" v-if="segment.slice(0, 6) == ':text:'">
@@ -137,6 +125,7 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+
 .container {
 	display: flex;
 	flex-direction: column;

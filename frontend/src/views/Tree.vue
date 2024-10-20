@@ -45,7 +45,7 @@ class TreeNode {
 	constructor(id, parentid, x, y) {
 		this.x = x;
 		this.y = y;
-		this.height = 75;
+		this.height = 150 / window.devicePixelRatio;
 		this.width = this.height * 1.5;
 
 		this.isWrapper = false;
@@ -166,8 +166,8 @@ class TreeNode {
 			mouse.x >= this.x - this.width / 2 &&
 			mouse.x <= this.x + this.width / 2;
 		const yHovered =
-			mouse.y >= this.y - this.width / 2 &&
-			mouse.y <= this.y + this.width / 2;
+			mouse.y >= this.y - this.height / 2 &&
+			mouse.y <= this.y + this.height / 2;
 
 		if (xHovered && yHovered) {
 			return true;
@@ -236,33 +236,31 @@ function updateChildren(top) {
 
 // Positions Node Within the Node Tree According to the Root Node
 function positionNodes(node) {
-	setTimeout(() => {
-        const ratio = window.devicePixelRatio;
-        const width = canvas.width / ratio;
+    const ratio = window.devicePixelRatio;
+    const width = canvas.width / ratio;
 
-		if (node.id == root.id) {
-			root.x = width / 2;
-			root.y = 100 / ratio;
-		}
+    if (node.id == root.id) {
+        root.x = width / 2;
+        root.y = 100 / ratio;
+    }
 
-		let visibleChildren = node.children.filter(
-			(child) =>
-				(node.id == root.id && child.within == true) ||
-				(node.id != root.id && child.within == false)
-		);
-		console.log(visibleChildren);
+    let visibleChildren = node.children.filter(
+        (child) =>
+            (node.id == root.id && child.within == true) ||
+            (node.id != root.id && child.within == false)
+    );
 
-		visibleChildren.forEach((child, index) => {
-            const relX = width / (visibleChildren.length+1);
+    console.log(visibleChildren);
 
-            child.x = relX * (index+1) + (node.x - (width/2));
-            child.x = child.x + (node.x - child.x) / 3;
-            child.y = node.y + (200 / ratio);
+    visibleChildren.forEach((child, index) => {
+        const relX = width / (visibleChildren.length+1);
 
-            positionNodes(child);
+        child.x = relX * (index+1) + (node.x - (width/2));
+        child.x = child.x + (node.x - child.x) / 3;
+        child.y = node.y + (200 / ratio);
 
-		});
-	}, 50);
+        positionNodes(child);
+    });
 }
 
 function dataToTreeNodes(data) {
@@ -310,8 +308,8 @@ onMounted(async () => {
 	canvas.width = width * ratio;
 	canvas.height = height * ratio;
 
-	canvas.style.width = width + "px";
-	canvas.style.height = height + "px";
+	// canvas.style.width = width + "px";
+	// canvas.style.height = height + "px";
 	ctx.scale(ratio, ratio); // Fix Blurry Canvas Text: https://stackoverflow.com/questions/15661339/how-do-i-fix-blurry-text-in-my-html5-canvas
 
 	canvas.addEventListener("mousedown", () => {
@@ -358,10 +356,16 @@ onMounted(async () => {
 </template>
 
 <style scope>
+
+#canv {
+    width: 98vw;
+}
+
 .container {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	border-bottom: 2px solid var(--dark-green);
 }
+
 </style>

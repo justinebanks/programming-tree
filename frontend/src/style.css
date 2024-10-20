@@ -19,6 +19,11 @@
 	--black2: #151015;
 }
 
+body {
+	margin: 0px;
+	padding: 0px;
+}
+
 * {
 	font-family: "Inter", Arial, Helvetica, sans-serif;
 }
