@@ -5,11 +5,14 @@ import Axios from "axios";
 let ctx = null;
 let canvas = null;
 
-let mouseDown = false;
-let mouse = { x: 0, y: 0 };
+let mouseDown = false; // Mouse State
+let mouseOrigin = { x: 0, y: 0 }; // Origin of Mouse Movement
+let mouse = { x: 0, y: 0 }; // Mouse Position Relative To Canvas
 
 let points = [];
 let root = null;
+let globalOffset = { x: 0, y: 0 };
+
 
 function updateTreeNodes() {
 	const params = getQueryParams();
@@ -80,14 +83,15 @@ class TreeNode {
 	}
 
 	draw() {
+
 		// Line To Parent
 		if (this.parent != null && root.id != this.id) {
 			ctx.beginPath();
 			ctx.strokeStyle = "white";
 			//ctx.moveTo(this.x + this.width/2, this.y + this.height/2);
 			//ctx.lineTo(currentNode.x + currentNode.width/2, currentNode.y + currentNode.height/2);
-			ctx.moveTo(this.x, this.y - this.height / 2);
-			ctx.lineTo(this.parent.x, this.parent.y + this.height / 2);
+			ctx.moveTo(this.x + globalOffset.x, (this.y + globalOffset.y) - this.height / 2);
+			ctx.lineTo(this.parent.x + globalOffset.x, this.parent.y + globalOffset.y + this.height / 2);
 			ctx.closePath();
 			ctx.stroke();
 		}
@@ -108,16 +112,16 @@ class TreeNode {
 		const borderWidth = 3;
 		let level = TreeNode.getLevel(this);
 		ctx.fillRect(
-			this.x - (this.width + borderWidth) / 2,
-			this.y - (this.height + borderWidth) / 2,
+			(this.x + globalOffset.x) - (this.width + borderWidth) / 2,
+			(this.y + globalOffset.y) - (this.height + borderWidth) / 2,
 			this.width + borderWidth,
 			this.height + borderWidth
 		);
 
 		if (!this.isHovered()) ctx.fillStyle = colors[level % colors.length];
 		ctx.fillRect(
-			this.x - this.width / 2,
-			this.y - this.height / 2,
+			(this.x + globalOffset.x) - this.width / 2,
+			(this.y + globalOffset.y) - this.height / 2,
 			this.width,
 			this.height
 		);
@@ -128,7 +132,7 @@ class TreeNode {
 			ctx.font = "16px Arial";
 			ctx.textAlign = "center";
 			ctx.textBaseline = "middle";
-			ctx.fillText(this.text, this.x, this.y, this.width - 10);
+			ctx.fillText(this.text, this.x + globalOffset.x, this.y + globalOffset.y, this.width - 10);
 		}
 	}
 
@@ -160,14 +164,13 @@ class TreeNode {
 	}
 
 	isHovered() {
-		//const xHovered = (mouse.x >= this.x && mouse.x <= this.x + this.width);
-		//const yHovered = (mouse.y >= this.y && mouse.y <= this.y + this.height);
+
 		const xHovered =
-			mouse.x >= this.x - this.width / 2 &&
-			mouse.x <= this.x + this.width / 2;
+			mouse.x >= (this.x + globalOffset.x) - this.width / 2 &&
+			mouse.x <= (this.x + globalOffset.x) + this.width / 2;
 		const yHovered =
-			mouse.y >= this.y - this.height / 2 &&
-			mouse.y <= this.y + this.height / 2;
+			mouse.y >= (this.y + globalOffset.y) - this.height / 2 &&
+			mouse.y <= (this.y + globalOffset.y) + this.height / 2;
 
 		if (xHovered && yHovered) {
 			return true;
@@ -299,8 +302,8 @@ onMounted(async () => {
 	Axios.defaults.withCredentials = false;
 
 	const ratio = window.devicePixelRatio;
-	const width = 1200;
-	const height = 600;
+	const width = window.innerWidth * 0.98;
+	const height = window.innerHeight;
 
 	canvas = document.getElementById("canv");
 	ctx = canvas.getContext("2d");
@@ -308,12 +311,16 @@ onMounted(async () => {
 	canvas.width = width * ratio;
 	canvas.height = height * ratio;
 
-	// canvas.style.width = width + "px";
-	// canvas.style.height = height + "px";
+	canvas.style.width = width + "px";
+	canvas.style.height = height + "px";
 	ctx.scale(ratio, ratio); // Fix Blurry Canvas Text: https://stackoverflow.com/questions/15661339/how-do-i-fix-blurry-text-in-my-html5-canvas
 
-	canvas.addEventListener("mousedown", () => {
+	canvas.addEventListener("mousedown", (e) => {
 		mouseDown = true;
+
+        mouseOrigin.x = e.offsetX - globalOffset.x;
+        mouseOrigin.y = e.offsetY - globalOffset.y;
+
 		console.log("Mouse: ", mouse);
 	});
 
@@ -324,6 +331,11 @@ onMounted(async () => {
 	canvas.addEventListener("mousemove", (e) => {
 		mouse.x = e.offsetX;
 		mouse.y = e.offsetY;
+
+        if (mouseDown) {
+            globalOffset.x = (e.offsetX - mouseOrigin.x);
+            globalOffset.y = (e.offsetY - mouseOrigin.y);
+        }
 	});
 
 	const params = getQueryParams();
@@ -355,11 +367,7 @@ onMounted(async () => {
 	</div>
 </template>
 
-<style scope>
-
-#canv {
-    width: 98vw;
-}
+<style scoped>
 
 .container {
 	display: flex;
