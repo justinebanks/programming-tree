@@ -99,7 +99,6 @@ onMounted(async () => {
 </script>
 
 <template>
-    
 	<div class="container">
 		<h1 class="page-title" v-if="!isLoading && !error" :style="{ backgroundColor: color }">
 			{{ name }}
@@ -123,10 +122,11 @@ onMounted(async () => {
 <style scoped>
 
 .container {
+    padding-top: 200px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: center;
+	justify-content: flex-start;
 	background-color: black;
     min-height: 100vh;
 	font-family: "Arial", sans-serif;
