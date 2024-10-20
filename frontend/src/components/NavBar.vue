@@ -1,6 +1,8 @@
 <template>
 	<div class="nav-bar">
+		<img src="../assets/logo.png" alt="" class="logo-img">
 		<p>Programming Tree</p>
+
 		<a href="/">Home</a>
 		<a href="/tree">Tree</a>
 		<a href="/about">About</a>
@@ -10,6 +12,16 @@
 </template>
 
 <style scoped>
+
+.logo-img {
+	width: 50px;
+	margin-left: 20px;
+	border:2px solid black; 
+	border-radius: 50%;
+	padding:10px;
+	background-color: var(--light-yellow);
+}
+
 .nav-bar {
 	width: 100%;
 	display: flex;

@@ -43,6 +43,7 @@ async function registerUser() {
 	<div>
 		<form @submit.prevent="registerUser">
 			<div class="input-container">
+				<img src="../assets/logo.png" alt="" class="logo-img">
 				<h1>Register</h1>
 				<input
 					type="text"

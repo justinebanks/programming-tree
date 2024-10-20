@@ -8,6 +8,10 @@
 	color: white;
 }
 
+.logo-img {
+	width: 60px;
+}
+
 h1 {
 	color: white;
 }
@@ -16,7 +20,7 @@ form {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	height: 75vh;
+	height: 90vh;
 }
 
 .input-container {

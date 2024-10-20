@@ -46,6 +46,7 @@ async function loginUser(event) {
 	<form @submit="loginUser">
 		
 		<div class="input-container">
+            <img src="../assets/logo.png" alt="" class="logo-img">
 			<h1>Log In</h1>
 			<input
 				type="text"
