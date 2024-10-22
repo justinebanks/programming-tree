@@ -13,7 +13,7 @@ CREATE TABLE nodes (
 -- Dummy Node Data For Testing
 INSERT INTO nodes (parentId, name, wrapper, button, within)
 VALUES
-    (NULL, 'Programming Tree', 'true', 'false', 'false'),
+    (NULL, 'Dev Tree', 'true', 'false', 'false'),
     (1, 'Fundamentals', 'true', 'true', 'true'),
 	(2, 'Python', 'false', 'false', 'false'),
     (3, 'Object Oriented Programming', 'false', 'false', 'false'),

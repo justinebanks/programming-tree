@@ -18,7 +18,7 @@ const redirectToAbout = () => {
 		<h1>Learn To Program More Easily Than Ever Before</h1>
 		<p>
 			Learning to program is hard and it's even harder to figure out where
-			to start. The Programming Tree is designed to eliminate this
+			to start. The DevTree is designed to eliminate this
 			difficulty
 		</p>
 		<button @click="redirectToSignup()">Create Account/Register</button>
