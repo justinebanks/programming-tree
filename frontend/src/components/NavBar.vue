@@ -1,7 +1,7 @@
 <template>
 	<div class="nav-bar">
 		<img src="../assets/logo.png" alt="" class="logo-img">
-		<p>Programming Tree</p>
+		<p>DevTree</p>
 
 		<a href="/">Home</a>
 		<a href="/tree">Tree</a>
