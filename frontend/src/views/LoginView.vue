@@ -1,80 +1,62 @@
-<script setup>
-import Axios from "axios";
-import { ref } from "vue";
-
-// Define form field refs
-const username = ref("");
-const password = ref("");
-const msg = ref("");
-
-async function loginUser(event) {
-	// Prevent form from reloading the page
-	event.preventDefault();
-
-	// Reset error and success messages
-	msg.value = "";
-	
-	try {
-		// Send POST request to the backend login endpoint
-		const response = await Axios.post(
-    		'https://localhost:8443/login',
-    		{ username: username.value, password: password.value },
-    		{ withCredentials: true }
-		);
-
-		msg.value = response.data.msg;
-		console.log(response.data.msg + " User: " + response.data.user);
-        if (msg.value === 'Authenticated') {
-            if (response.headers['set-cookie']) {
-			// Set the cookies in the document
-				document.cookie = response.headers['set-cookie'][0];
-			}
-			// Redirect to the dashboard
-			window.location.href = '/dashboard';
-        }
-	} catch (error) {
-		// Handle errors (e.g., validation issues or server problems)
-		msg.value = error.response
-			? error.response.data.msg
-			: "An error occurred!";
-		console.error(error);
-	}
-}
-</script>
-
 <template>
-	<form @submit="loginUser">
-		
-		<div class="input-container">
-            <img src="../assets/logo.png" alt="" class="logo-img">
-			<h1>Log In</h1>
-			<input
-				type="text"
-				id="username"
-				name="username"
-				v-model="username"
-				placeholder="Username"
-				required
-			/>
-
-			<input
-				type="password"
-				id="password"
-				name="password"
-				v-model="password"
-				placeholder="Password"
-				required
-			/>
-
-			<input type="submit" value="Login" />
-			<a href="/signup">Don't Have An Account? Register</a>
+	<div class="login-view">
+	  <h2>Login</h2>
+	  <form @submit.prevent="login">
+		<div>
+		  <label for="username">Username:</label>
+		  <input type="text" v-model="username" id="username" required>
 		</div>
-	</form>
-
-	<!-- Display the success/error message -->
-	<p>{{ msg }}</p>
-</template>
-
-<style scoped>
-    @import "../assets/account-styling.css";
-</style>
+		<div>
+		  <label for="password">Password:</label>
+		  <input type="password" v-model="password" id="password" required>
+		</div>
+		<button type="submit">Login</button>
+	  </form>
+	  <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
+	</div>
+  </template>
+  
+  <script>
+  import axios from 'axios'; // Import Axios
+  
+  export default {
+	data() {
+	  return {
+		username: '',
+		password: '',
+		errorMessage: ''
+	  };
+	},
+	methods: {
+	  async login() {
+		try {
+		  // Use axios to send the login request
+		  const response = await axios.post('http://localhost:3000/login', { username: this.username, password: this.password });
+		  if (response.data.msg === 'Login successful') {
+			const user = response.data.user;
+			console.log(`Login successful: User ID: ${user.id}, Username: ${user.username}, Email: ${user.email}`);
+			
+			// Store token or user info as needed (e.g., using Vuex)
+			this.$store.dispatch('login', user); // Correctly dispatch the Vuex action
+			
+			this.$router.push({ name: 'dashboard' }); // Redirect to dashboard
+		  } else {
+			this.errorMessage = response.data.error || 'Login failed. Please try again.';
+			console.error(response.data.error);
+		  }
+		} catch (err) {
+		  this.errorMessage = 'An error occurred during login. Please try again later.';
+		  console.error("Error during login", err);
+		}
+	  }
+	}
+  };
+  </script>
+  
+  <style scoped>
+  /* Add your styles here */
+  .error {
+	color: red;
+  }
+  </style>
+  

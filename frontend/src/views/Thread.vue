@@ -18,13 +18,13 @@ export default {
 			try {
 				// Fetch the thread data
 				const threadResponse = await axios.get(
-					`https://localhost:8443/api/threads/${this.threadId}`
+					`http://localhost:3000/api/threads/${this.threadId}`
 				);
 				this.thread = threadResponse.data;
 
 				// Fetch the posts for the thread
 				const postsResponse = await axios.get(
-					`https://localhost:8443/api/threads/${this.threadId}/posts`
+					`http://localhost:3000/api/threads/${this.threadId}/posts`
 				);
 				this.posts = postsResponse.data;
 			} catch (error) {
@@ -38,7 +38,7 @@ export default {
 			try {
 				// Send a POST request to add a new post
 				await axios.post(
-					`https://localhost:8443/api/threads/${this.threadId}/posts`,
+					`http://localhost:3000/api/threads/${this.threadId}/posts`,
 					{
 						author: this.newPostAuthor, // Include the author's name
 						content: this.newPostContent, // Include the post content

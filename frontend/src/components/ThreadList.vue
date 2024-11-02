@@ -7,7 +7,7 @@ export default {
 		};
 	},
 	async mounted() {
-		const response = await fetch("https://localhost:8443/api/threads"); // Adjust URL to match your backend
+		const response = await fetch("http://localhost:3000/api/threads"); // Adjust URL to match your backend
 		this.threads = await response.json();
 	},
 };

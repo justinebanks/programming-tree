@@ -7,10 +7,7 @@ const passport = require("passport");
 const { Sequelize } = require("sequelize");
 const cors = require("cors");
 const flash = require('connect-flash');
-
-// HTTPS and HTTP modules
-const https = require("https");
-const http = require("http");
+const http = require("http");  // Use HTTP instead of HTTPS
 
 // Initialize Express app
 const app = express();
@@ -19,14 +16,8 @@ const initializePassport = require("./passports");
 
 // CORS options
 const corsOptions = {
-    origin: "http://localhost:3000", // Specify your frontend URL
-    credentials: true, // Allow credentials (cookies, authorization headers)
-};
-
-// Read SSL certificate and private key from 'sslcert' directory
-const sslOptions = {
-    key: fs.readFileSync(path.join(__dirname, "sslcert", "key.pem")),
-    cert: fs.readFileSync(path.join(__dirname, "sslcert", "cert.pem")),
+    origin: "http://localhost", // Update to reflect new frontend URL
+    credentials: true, // Allow cookies to be sent
 };
 
 // Sequelize object and configData
@@ -78,8 +69,8 @@ app.use(
         saveUninitialized: false,
         cookie: {
             maxAge: 24 * 60 * 60 * 1000, // 1-day session
-            secure: false, // Set to true if using HTTPS in production
-            httpOnly: true, // Protect cookie from being accessed by client-side JS
+            secure: false, // Set to false to allow HTTP cookies
+            httpOnly: false, // Allow JS to access cookie in development for testing
         },
     })
 );
@@ -91,6 +82,9 @@ initializePassport(passport);
 app.use(express.urlencoded({ extended: false }));
 
 function ensureAuthenticated(req, res, next) {
+    console.log("Checking authentication. Session:", req.session);
+    console.log("User authenticated:", req.isAuthenticated());
+
     if (req.isAuthenticated()) {
         return next();
     }
@@ -184,25 +178,6 @@ app.delete("/nodes/:id", async (req, res) => {
 
 // Login route - Modified to handle redirection properly
 
-app.post('/login', (req, res, next) => {
-    passport.authenticate('local', (err, user, info) => {
-        if (err) { return next(err); }
-        if (!user) { return res.status(400).json({ msg: 'Login failed' }); }
-        req.login(user, function(err) {
-            if (err) { return next(err); }
-
-            if (req.user) {
-                // Return a success response with a token or cookie
-                res.json({ token: ' authenticated-token' });
-              } else {
-                res.json({ error: 'Invalid username or password' });
-              }
-            
-        });
-    })(req, res, next);
-});
-
-// Signup route remains the same
 app.post("/signup", async (req, res, next) => {
     let { username, email, password, password2 } = req.body;
     let errors = [];
@@ -257,19 +232,38 @@ app.post("/signup", async (req, res, next) => {
     }
 });
 
-// Logout route remains the same
-app.post("/logout", (req, res) => {
-    req.logout(function (err) {
+
+app.post('/login', (req, res, next) => {
+    passport.authenticate('local', (err, user, info) => {
         if (err) {
+            console.error("Error in passport.authenticate:", err);
             return next(err);
         }
-        res.json({ msg: "Logged out successfully!" });
-    });
+        if (!user) {
+            console.error("Login failed: User not found");
+            return res.status(400).json({ msg: 'Login failed' });
+        }
+        req.login(user, function(err) {
+            if (err) {
+                console.error("Error during req.login:", err);
+                return next(err);
+            }
+
+            if (req.user) {
+                console.log(`User successfully authenticated. User: ${JSON.stringify(req.user)}`);
+                console.log("Session after login:", req.session);
+                // Return a success response with user details for frontend
+                res.json({ msg: 'Login successful', user: req.user });
+            } else {
+                console.error("Login error: req.user is undefined");
+                res.json({ error: 'Invalid username or password' });
+            }
+        });
+    })(req, res, next);
 });
 
-// Dashboard route - modified with session authentication
 app.get("/dashboard", ensureAuthenticated, (req, res) => {
-    console.log("Session on /dashboard access:", req.session); // Log session
+    console.log("Session on /dashboard access:", req.session);
     if (req.isAuthenticated()) {
         const { id, username, email } = req.user;
         return res.json({ msg: "Authenticated", user: { id, username, email } });
@@ -369,15 +363,7 @@ app.post("/api/forum", async (req, res) => {
 
 });
 
-// Start HTTPS server
-https.createServer(sslOptions, app).listen(8443, () => {
-    console.log("✅ HTTPS Server running on port 8443");
-});
-
-// HTTP server for redirecting to HTTPS
-http.createServer((req, res) => {
-    res.writeHead(301, { Location: `https://${req.headers.host}${req.url}` });
-    res.end();
-}).listen(80, () => {
-    console.log("🌐 HTTP Server running on port 80, redirecting to HTTPS");
+// Start HTTP server on port 3000
+http.createServer(app).listen(3000, () => {
+    console.log("✅ HTTP Server running on port 3000");
 });

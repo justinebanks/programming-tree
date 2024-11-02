@@ -13,7 +13,7 @@ export default {
 	methods: {
 		createThread() {
 			axios
-				.post("https://localhost:8443/api/forum", {
+				.post("http://localhost:3000/api/forum", {
 					author: this.author,
 					title: this.title,
 				})

@@ -4,14 +4,15 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port 3000 --host 0.0.0.0",
+    "dev": "vite --port 80 --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
     "axios": "^1.7.7",
     "vue": "^3.4.37",
-    "vue-router": "^4.4.5"
+    "vue-router": "^4.4.5",
+    "vuex": "^4.1.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.1.2",

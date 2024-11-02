@@ -13,7 +13,7 @@ async function registerUser() {
 	msg.value = "";
 
 	try {
-		const response = await Axios.post("https://localhost:8443/signup", {
+		const response = await Axios.post("http://localhost:3000/signup", {
 			username: username.value,
 			email: email.value,
 			password: password.value,

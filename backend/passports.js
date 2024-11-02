@@ -5,7 +5,6 @@ const { Sequelize } = require('sequelize');
 const path = require('path');
 const fs = require('fs');
 
-
 // Define a function to initialize passport strategies
 let sequelize = null;
 let configData = {};
@@ -37,8 +36,6 @@ fs.readFile(path.join(__dirname, '/config.ini'), 'utf-8', (err, data) => {
         console.error('Unable to connect to the database:', error);
     }
 });
-
-
 
 function initializePassport(passport) {
     passport.use(new LocalStrategy({
@@ -77,8 +74,15 @@ function initializePassport(passport) {
         console.log("Deserializing User by ID:", id); // Log deserialization
         try {
             const [user] = await sequelize.query('SELECT * FROM users WHERE id = ?', { replacements: [id] });
-            done(null, user[0]);
+            if (user && user.length) {
+                console.log("User found during deserialization:", user[0]);
+                done(null, user[0]);
+            } else {
+                console.error("No user found during deserialization with ID:", id);
+                done(null, false);
+            }
         } catch (err) {
+            console.error("Error during deserialization:", err);
             done(err);
         }
     });

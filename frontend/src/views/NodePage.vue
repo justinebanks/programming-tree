@@ -17,7 +17,7 @@ const fetchParentNodes = async (parentId) => {
 		// Stop when parentId reaches 1 (root node)
 		if (parentId > 1) {
 			const response = await Axios.get(
-				`https://localhost:8443/nodes/${parentId}`
+				`http://localhost:3000/nodes/${parentId}`
 			);
 
 			//console.log("Parent node response:", response); // Debug: log parent node response
@@ -59,7 +59,7 @@ onMounted(async () => {
 
 		if (parseInt(id) > 0) {
 			const response = await Axios.get(
-				`https://localhost:8443/nodes/${id}`
+				`http://localhost:3000/nodes/${id}`
 			);
 
 			console.log("Node response:", response); // Debug: log node response

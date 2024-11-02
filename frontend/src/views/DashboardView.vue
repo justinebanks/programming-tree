@@ -1,10 +1,10 @@
 <template>
-  <div v-if="authenticated">
-    <h1>Dashboard</h1>
-    <p>Welcome, {{ user.username }}!</p>
+  <div v-if="user">
+    <h2>Welcome, {{ user.username }}!</h2>
+    <p>Your email: {{ user.email }}</p>
   </div>
   <div v-else>
-    <p>Redirecting to login...</p>
+    <p>Loading...</p>
   </div>
 </template>
 
@@ -15,24 +15,23 @@ export default {
   data() {
     return {
       user: null,
-      authenticated: false,
     };
   },
-  async mounted() {
+  async created() {
     try {
-      const response = await axios.get('https://localhost:8443/dashboard', {
-        withCredentials: true, // Send session cookie to check authentication
-      });
-
+      const response = await axios.get('http://localhost:3000/dashboard');
       if (response.data.msg === 'Authenticated') {
-        this.authenticated = true;
-        this.user = response.data.user; // Get the user data
+        this.user = response.data.user;
       } else {
-        this.$router.push('/login'); // Redirect to login if not authenticated
+        console.error('Unauthorized access');
       }
     } catch (error) {
-      this.$router.push('/login'); // Redirect to login on error
+      console.error('Error fetching dashboard data:', error);
     }
-  },
+  }
 };
 </script>
+
+<style scoped>
+/* Add your styles here */
+</style>

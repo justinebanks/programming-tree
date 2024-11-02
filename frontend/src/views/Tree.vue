@@ -339,7 +339,7 @@ onMounted(async () => {
 	});
 
 	const params = getQueryParams();
-	const nodeData = await Axios.get("https://localhost:8443/nodes");
+	const nodeData = await Axios.get("http://localhost:3000/nodes");
 	console.log("Node Data: ", nodeData.data);
 
 	points = dataToTreeNodes(nodeData.data);
